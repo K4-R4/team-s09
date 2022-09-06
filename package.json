@@ -20,7 +20,6 @@
     "electron": "^20.1.0"
   },
   "dependencies": {
-    "ejs-electron": "^2.1.1",
     "sqlite3": "^5.0.11"
   }
 }
