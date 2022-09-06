@@ -1,5 +1,4 @@
 # team-s09
-git 練習
-スケジュール
-9/5 19~
-9/9 21~
+create文
+
+ CREATE TABLE tododata(id INTEGER PRIMARY KEY, text TEXT NOT NULL, display BOOLEAN NOT NULL, UpdatedAt TIMESTAMP NOT NULL);
