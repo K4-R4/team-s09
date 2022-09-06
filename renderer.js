@@ -4,3 +4,9 @@
 // `nodeIntegration` is turned off. Use `preload.js` to
 // selectively enable features needed in the rendering
 // process.
+document.addEventListener('DOMContentLoaded', () => {
+    document.getElementById('add').addEventListener('click', async () => {
+        await window.api.detail()
+    })
+
+})

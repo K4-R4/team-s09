@@ -1,6 +1,9 @@
 // Modules to control application life and create native browser window
-const {app, BrowserWindow} = require('electron')
+const {app, BrowserWindow, ipcMain} = require('electron')
 const path = require('path')
+const sqlite3 = require('sqlite3')
+
+const db = new sqlite3.Database("./todo.db")
 
 function createWindow () {
   // Create the browser window.
@@ -17,6 +20,18 @@ function createWindow () {
 
   // Open the DevTools.
   // mainWindow.webContents.openDevTools()
+}
+
+function createDetailWindow () {
+  const detailWindow = new BrowserWindow({
+    width: 400,
+    height: 300,
+    webPreferences: {
+      preload: path.join(__dirname, 'preload.js')
+    }
+  })
+
+  detailWindow.loadFile('detail.html')
 }
 
 // This method will be called when Electron has finished
@@ -41,3 +56,8 @@ app.on('window-all-closed', function () {
 
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and require them here.
+
+ipcMain.handle('detail', () => {
+  createDetailWindow()
+  return
+})
