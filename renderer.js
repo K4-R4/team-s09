@@ -5,8 +5,14 @@
 // selectively enable features needed in the rendering
 // process.
 document.addEventListener('DOMContentLoaded', () => {
-    document.getElementById('add').addEventListener('click', async () => {
-        await window.api.detail()
-    })
-
+    if (document.title === "memo") {
+        document.getElementById('add').addEventListener('click', async () => {
+            await window.api.detail()
+        })
+    } else if (document.title === "detail") {
+        document.getElementById('save').addEventListener(('click'), async () => {
+            let data = document.getElementById('data').value
+            await window.api.save(data)
+        })
+    }
 })

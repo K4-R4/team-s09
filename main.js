@@ -1,6 +1,7 @@
 // Modules to control application life and create native browser window
 const {app, BrowserWindow, ipcMain} = require('electron')
 const path = require('path')
+const { title } = require('process')
 const sqlite3 = require('sqlite3')
 
 const db = new sqlite3.Database("./todo.db")
@@ -57,7 +58,18 @@ app.on('window-all-closed', function () {
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and require them here.
 
+// Open detail window
 ipcMain.handle('detail', () => {
   createDetailWindow()
+  return
+})
+
+// Save data to the database
+ipcMain.handle('save', (event, data) => {
+  console.log(data)
+  db.run("INSERT INTO data (text, display, UpdatedAt) values(?, ?, ?)", data, false, Date.now())
+  // Close window after saving data
+  const currentWindow = BrowserWindow.getFocusedWindow()
+  currentWindow.close()
   return
 })

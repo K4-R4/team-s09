@@ -3,5 +3,6 @@
 const {contextBridge, ipcRenderer} = require('electron')
 
 contextBridge.exposeInMainWorld('api', {
-  detail: async () => await ipcRenderer.invoke('detail')
+  detail: async () => await ipcRenderer.invoke('detail'),
+  save: async (data) => await ipcRenderer.invoke('save', data)
 })
