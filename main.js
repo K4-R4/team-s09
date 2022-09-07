@@ -1,12 +1,12 @@
 // Modules to control application life and create native browser window
-const {app, BrowserWindow, ipcMain} = require('electron')
+const { app, BrowserWindow, ipcMain } = require('electron')
 const path = require('path')
 const { title } = require('process')
 const sqlite3 = require('sqlite3')
 
 const db = new sqlite3.Database("./todo.db")
 
-function createWindow () {
+function createWindow() {
   // Create the browser window.
   const mainWindow = new BrowserWindow({
     width: 800,
@@ -23,7 +23,7 @@ function createWindow () {
   // mainWindow.webContents.openDevTools()
 }
 
-function createDetailWindow () {
+function createDetailWindow() {
   const detailWindow = new BrowserWindow({
     width: 400,
     height: 300,
@@ -73,3 +73,6 @@ ipcMain.handle('save', (event, data) => {
   currentWindow.close()
   return
 })
+
+//updateを作成したい
+//db.run("UPDATE data SET text = ?, display = ?, UpdatedAt = ? WHERE id = ?", (data), false or true, Data.now, id);

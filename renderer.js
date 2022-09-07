@@ -16,3 +16,15 @@ document.addEventListener('DOMContentLoaded', () => {
         })
     }
 })
+
+//update.js
+
+var editbtn = document.getElementById("editbtn");
+
+editbtn.addEventListener("click", function () {
+    //alert("編集画面を開きます");
+    let number = document.getElementById("number").value;
+    window.open("./updated.html", "", "width=300,height=300");
+})
+
+
