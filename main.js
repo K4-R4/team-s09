@@ -2,6 +2,7 @@
 const { app, BrowserWindow, ipcMain } = require('electron')
 const path = require('path')
 const { title } = require('process')
+const { toUnicode } = require('punycode')
 const sqlite3 = require('sqlite3')
 
 const db = new sqlite3.Database("./todo.db")
@@ -75,4 +76,33 @@ ipcMain.handle('save', (event, data) => {
 })
 
 //updateを作成したい
-//db.run("UPDATE data SET text = ?, display = ?, UpdatedAt = ? WHERE id = ?", (data), false or true, Data.now, id);
+
+//id get complete
+ipcMain.handle("update", (event, number) => {
+  let id = number;
+  console.log(id)
+})
+
+
+ipcMain.handle("updated", (event, stextarea) => {
+  let text = stextarea;
+  console.log(text)
+})
+
+//db.run("UPDATE data SET text = ? where id = ?", a, id)
+
+
+//db.run("UPDATE data SET text = ?, display = ?, UpdatedAt = ? WHERE id = ?", data, false, Data.now(), 20);
+
+/*
+ipcMain.handle("", (引数) => {
+  console.log()
+  db.run
+
+  ipcMain.handle("save", (event, data) => {
+  console.log(data)
+  db.run("UPDATE data SET text = ?, display = ?, UpdatedAt = ? WHERE id = ?", (data), false, Data.now(), 1);
+})
+})
+*/
+

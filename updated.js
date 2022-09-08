@@ -1,9 +1,11 @@
+
 let updatedbtn = document.getElementById("updatedbtn");
 updatedbtn.addEventListener("click", async () => {
     let stextarea = document.updated.stextarea.value;
-    alert(stextarea);
-    await window.api.save(data)
+    await window.api.updateds(stextarea)
+    window.close("./updated.html")
 })
+
 
 
 ////

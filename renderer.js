@@ -17,14 +17,38 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 })
 
+
+
 //update.js
+if (document.title === "memo") {
+    document.getElementById("editbtn").addEventListener("click", async () => {
+        //alert("編集画面を開きます");
+        let number = document.getElementById("number").value;
+        await window.api.updated(number)
+        window.open("./updated.html", "", "width=300,height=300");
+    })
+}
+else if (document.title === "updated") {
+    document.getElementById("updatebtn").addEventListener("click", async () => {
+        let stextarea = document.updated.stextarea.value
+        await updateds(stextarea)
+        window.close("./updated.html")
+    })
+}
 
+
+/*
 var editbtn = document.getElementById("editbtn");
-
-editbtn.addEventListener("click", function () {
+ 
+editbtn.addEventListener("click", async () => {
     //alert("編集画面を開きます");
     let number = document.getElementById("number").value;
+    await window.api.updated(number)
     window.open("./updated.html", "", "width=300,height=300");
-})
+})*/
 
+/*        
+let stextarea = document.updated.stextarea.value;
+        window.close("./updated.html")
+var updatedbtn = document.getElementById("updatedbtn"); */
 
