@@ -17,21 +17,12 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 })
 
-
-
 //update.js
 if (document.title === "memo") {
     document.getElementById("editbtn").addEventListener("click", async () => {
         //alert("編集画面を開きます");
         let number = document.getElementById("number").value;
         await window.api.updated(number)
-    })
-}
-else if (document.title === "updated") {
-    document.getElementById("updatebtn").addEventListener("click", async () => {
-        let stextarea = document.updated.stextarea.value
-        await updateds(stextarea)
-        window.close("./updated.html")
     })
 }
 
