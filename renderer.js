@@ -25,22 +25,3 @@ if (document.title === "memo") {
         await window.api.updated(number)
     })
 }
-
-
-/*
-var editbtn = document.getElementById("editbtn");
-
-        //window.open("./updated.html", "", "width=300,height=300");
- 
-editbtn.addEventListener("click", async () => {
-    //alert("編集画面を開きます");
-    let number = document.getElementById("number").value;
-    await window.api.updated(number)
-    window.open("./updated.html", "", "width=300,height=300");
-})*/
-
-/*        
-let stextarea = document.updated.stextarea.value;
-        window.close("./updated.html")
-var updatedbtn = document.getElementById("updatedbtn"); */
-

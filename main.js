@@ -99,26 +99,7 @@ ipcMain.handle("update", (event, number) => {
 })
 
 
-ipcMain.handle("updatedbtn", (event, stextarea) => {
-  let text = stextarea;
-  console.log(text)
+ipcMain.handle("updated", (event, stextarea) => {
+  console.log(stextarea)
   return
 })
-
-//db.run("UPDATE data SET text = ? where id = ?", a, id)
-
-
-//db.run("UPDATE data SET text = ?, display = ?, UpdatedAt = ? WHERE id = ?", data, false, Data.now(), 20);
-
-/*
-ipcMain.handle("", (引数) => {
-  console.log()
-  db.run
-
-  ipcMain.handle("save", (event, data) => {
-  console.log(data)
-  db.run("UPDATE data SET text = ?, display = ?, UpdatedAt = ? WHERE id = ?", (data), false, Data.now(), 1);
-})
-})
-*/
-
