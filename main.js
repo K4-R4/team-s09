@@ -91,8 +91,10 @@ ipcMain.handle('save', (event, data) => {
 //id get complete
 ipcMain.handle("update", (event, number) => {
   creareUpdatewindow()
-  let id = number;
-  console.log(id)
+  console.log(typeof (number))
+  let id = parseFloat(number)
+  console.log(typeof (id))
+  db.run("UPDATE data SET text = ? WHERE id = ?", number, id)
   return
 })
 
