@@ -93,13 +93,16 @@ ipcMain.handle("update", (event, number) => {
   creareUpdatewindow()
   let id = number;
   console.log(id)
+  return
 })
 
 
-ipcMain.handle("updated", (event, stextarea) => {
-  console.log("clear")
+ipcMain.handle("updatedbtn", (event, stextarea) => {
+  let text = stextarea;
+  console.log(text)
   currentWindow = BrowserWindow.getFocusedWindow()
   currentWindow.close()
+  return
 })
 
 //db.run("UPDATE data SET text = ? where id = ?", a, id)
