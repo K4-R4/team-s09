@@ -36,6 +36,17 @@ function createDetailWindow() {
   detailWindow.loadFile('detail.html')
 }
 
+function creareUpdatewindow() {
+  const updatewindow = new BrowserWindow({
+    width: 300,
+    height: 300,
+    webPreferences: {
+      pleload: path.join(__dirname, "preload.js")
+    }
+  })
+  updatewindow.loadFile("updated.html")
+}
+
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
@@ -79,14 +90,16 @@ ipcMain.handle('save', (event, data) => {
 
 //id get complete
 ipcMain.handle("update", (event, number) => {
+  creareUpdatewindow()
   let id = number;
   console.log(id)
 })
 
 
 ipcMain.handle("updated", (event, stextarea) => {
-  let text = stextarea;
-  console.log(text)
+  console.log("clear")
+  currentWindow = BrowserWindow.getFocusedWindow()
+  currentWindow.close()
 })
 
 //db.run("UPDATE data SET text = ? where id = ?", a, id)
