@@ -99,7 +99,9 @@ ipcMain.handle("update", (event, number) => {
 })
 
 
-ipcMain.handle("updated", (event, stextarea) => {
+ipcMain.handle("stextarea", (event, stextarea) => {
   console.log(stextarea)
+  const currentupdatedWindow = BrowserWindow.getFocusedWindow()
+  currentupdatedWindow.close()
   return
 })

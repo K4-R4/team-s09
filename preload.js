@@ -6,5 +6,5 @@ contextBridge.exposeInMainWorld('api', {
   detail: async () => await ipcRenderer.invoke('detail'),
   save: async (data) => await ipcRenderer.invoke('save', data),
   updated: async (number) => await ipcRenderer.invoke("update", number),
-  updateds: async (stextarea) => await ipcRenderer.invoke("updated", stextarea)
+  stextarea: async (stextarea) => await ipcRenderer.invoke("stextare", stextarea)
 })
