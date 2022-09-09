@@ -1,7 +1,7 @@
 //SQLiteのインポート
 import sqlite3 from 'sqlite3';
 //todo.dbの認識
-const db = sqlite3.Database("./test.db");
+const db = sqlite3.Database("./todo.db");
 
 //メモのチェックボックスのリストを表示
     //delete.htmlの(id=lists)formの認識
