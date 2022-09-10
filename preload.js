@@ -5,6 +5,10 @@ const { contextBridge, ipcRenderer } = require('electron')
 contextBridge.exposeInMainWorld('api', {
   detail: async () => await ipcRenderer.invoke('detail'),
   save: async (data) => await ipcRenderer.invoke('save', data),
+  /*TODO
+  edit function*/
   updated: async (number) => await ipcRenderer.invoke("update", number),
   updatedbtn: async (stextarea) => await ipcRenderer.invoke("updatedbtn", stextarea)
+  /*TODO
+  delete function*/
 })

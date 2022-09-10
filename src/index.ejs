@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<!-------------------------------
+------------TODO----------------->
+<html>
+<head>
+  <meta charset="UTF-8">
+  <!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
+  <meta http-equiv="Content-Security-Policy"
+    content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'">
+  <link href="../styles.css" rel="stylesheet">
+  <title>memo</title>
+</head>
+<body>
+    <table>
+        <thead>
+            <tr>
+                <th>TEXT</th>
+                <th></th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            <% data.forEach((data) => { %>
+                <tr>
+                    <td><%= data.text %></td>
+                    <td>
+                        <form>
+                            <input name="id" type="hidden" value="<%= data.id %>">
+                            <input type="submit" value="display">
+                        </form>
+                    </td>
+                    <td>
+                        <form>
+                            <input name="id" type="hidden" value="<%= data.id %>">
+                            <input type="submit" value="edit">
+                        </form>
+                    </td>
+                    <td>
+                        <form>
+                            <input name="id" type="hidden" value="<%= data.id %>">
+                            <input type="submit" value="delete">
+                        </form>
+                    </td>
+                </tr>
+            <% }) %>
+        </tbody>
+    </table>
+  <form>
+    <button id="add" type="button">add</button>
+  </form>
+  <form method="POST" name="update">
+    temp sql primary id
+    <input id="number" type="number">
+    <button id="editbtn">編集</button>
+  </form>
+
+
+  <!-- You can also require other files to run in this process -->
+  <script src="../indexRenderer.js"></script>
+</body>
+
+</html>

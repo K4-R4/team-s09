@@ -1,25 +1,22 @@
 {
-  "name": "electron-quick-start",
+  "name": "todo-app",
   "version": "1.0.0",
-  "description": "A minimal Electron application",
+  "description": "todo application",
   "main": "main.js",
   "scripts": {
     "start": "electron ."
   },
-  "repository": "https://github.com/electron/electron-quick-start",
+  "repository": "https://github.com/K4-R4/team-s09.git",
   "keywords": [
-    "Electron",
-    "quick",
-    "start",
-    "tutorial",
-    "demo"
+    "Electron"
   ],
-  "author": "GitHub",
+  "author": "Shimesaba",
   "license": "CC0-1.0",
   "devDependencies": {
     "electron": "^20.1.0"
   },
   "dependencies": {
+    "ejs": "^3.1.8",
     "sqlite3": "^5.0.11"
   }
 }

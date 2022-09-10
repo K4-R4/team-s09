@@ -1,11 +1,38 @@
 // Modules to control application life and create native browser window
-const { app, BrowserWindow, ipcMain } = require('electron')
+const { app, BrowserWindow, ipcMain, dialog } = require('electron')
 const path = require('path')
 const { title } = require('process')
 const { toUnicode } = require('punycode')
 const sqlite3 = require('sqlite3')
+const ejs = require('ejs')
+const fs = require('fs')
 
 const db = new sqlite3.Database("./todo.db")
+
+function createHtml(data, templateFile, outputFile) {
+  ejs.renderFile(templateFile, {
+
+    //temp.ejsに渡す値
+    data: data
+
+  },function(err, html){
+
+    // 出力情報 => ejsから作成したhtmlソース
+    // console.log(err)
+
+    // 出力ファイル名
+    const file = outputFile
+
+    // テキストファイルに書き込む
+    fs.writeFileSync(file, String(html), 'utf8', (err) => {
+      if (err) {
+        console.log(err)
+      } else {
+        console.log('save')
+      }
+    });
+  });
+}
 
 function createWindow() {
   // Create the browser window.
@@ -17,8 +44,16 @@ function createWindow() {
     }
   })
 
+  let allTasks
+  db.all("SELECT id, text, display FROM data", function(err, rows) {
+    if (err) {
+      throw err
+    }
+    createHtml(rows, './src/index.ejs', './dist/index.html')
+  })
+
   // and load the index.html of the app.
-  mainWindow.loadFile('index.html')
+  mainWindow.loadFile('./dist/index.html')
 
   // Open the DevTools.
   // mainWindow.webContents.openDevTools()
@@ -33,7 +68,7 @@ function createDetailWindow() {
     }
   })
 
-  detailWindow.loadFile('detail.html')
+  detailWindow.loadFile('./detail.html')
 }
 
 function creareUpdatewindow() {
@@ -78,7 +113,9 @@ ipcMain.handle('detail', () => {
 
 // Save data to the database
 ipcMain.handle('save', (event, data) => {
-  console.log(data)
+  if (data.length === 0) {
+    return dialog.showErrorBox("", "入力がありません")
+  }
   db.run("INSERT INTO data (text, display, UpdatedAt) values(?, ?, ?)", data, false, Date.now())
   // Close window after saving data
   const currentWindow = BrowserWindow.getFocusedWindow()
@@ -86,7 +123,9 @@ ipcMain.handle('save', (event, data) => {
   return
 })
 
-//updateを作成したい
+
+/*TODO
+edit function*/
 
 //id get complete
 ipcMain.handle("update", (event, number) => {
@@ -105,3 +144,6 @@ ipcMain.handle("updatedbtn", (event, stextarea) => {
   currentupdatedWindow.close()
   return
 })
+
+/*TODO
+delete function*/

@@ -1,3 +1,6 @@
+/*TODO
+edit function*/
+
 document.getElementById("updatedbtn").addEventListener("click", async () => {
     let stextarea = document.getElementById("stextarea").value
     window.close("./updated.html")
@@ -5,5 +8,3 @@ document.getElementById("updatedbtn").addEventListener("click", async () => {
 
 
 })
-
-//
