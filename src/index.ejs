@@ -20,24 +20,24 @@
             </tr>
         </thead>
         <tbody>
-            <% data.forEach((data) => { %>
+            <% allTasks.forEach((data) => { %>
                 <tr>
                     <td><%= data.text %></td>
                     <td>
                         <form>
-                            <input name="id" type="hidden" value="<%= data.id %>">
+                            <input name="id" type="hidden" value="<%= allTasks.id %>">
                             <input type="submit" value="display">
                         </form>
                     </td>
                     <td>
                         <form>
-                            <input name="id" type="hidden" value="<%= data.id %>">
+                            <input name="id" type="hidden" value="<%= allTasks.id %>">
                             <input type="submit" value="edit">
                         </form>
                     </td>
                     <td>
                         <form>
-                            <input name="id" type="hidden" value="<%= data.id %>">
+                            <input name="id" type="hidden" value="<%= allTasks.id %>">
                             <input type="submit" value="delete">
                         </form>
                     </td>

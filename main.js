@@ -9,13 +9,11 @@ const fs = require('fs')
 
 const db = new sqlite3.Database("./todo.db")
 
-function createHtml(data, templateFile, outputFile) {
-  ejs.renderFile(templateFile, {
-
-    //temp.ejsに渡す値
-    data: data
-
-  },function(err, html){
+// Create html file from ejs template
+// 引数dataToPassはテンプレートに渡す値を{key: value, key1: value1}のような連想配列で記述
+// templateFile, outputFileはそれぞれテンプレートのパスと作成されるhtmlファイルのパス
+function createHtml(dataToPass, templateFile, outputFile) {
+  ejs.renderFile(templateFile, dataToPass, function(err, html){
 
     // 出力情報 => ejsから作成したhtmlソース
     // console.log(err)
@@ -44,12 +42,11 @@ function createWindow() {
     }
   })
 
-  let allTasks
-  db.all("SELECT id, text, display FROM data", function(err, rows) {
+  db.all("SELECT id, text, display FROM data", function(err, allTasks) {
     if (err) {
       throw err
     }
-    createHtml(rows, './src/index.ejs', './dist/index.html')
+    createHtml({allTasks: allTasks}, './src/index.ejs', './dist/index.html')
   })
 
   // and load the index.html of the app.
