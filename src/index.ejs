@@ -24,22 +24,14 @@
                 <tr>
                     <td><%= data.text %></td>
                     <td>
-                        <form>
-                            <input name="id" type="hidden" value="<%= allTasks.id %>">
-                            <input type="submit" value="display">
-                        </form>
+                        <input class="task-id" type="hidden" value="<%= allTasks.id %>">
+                        <button class="display" type="button">display</button>
                     </td>
                     <td>
-                        <form>
-                            <input name="id" type="hidden" value="<%= allTasks.id %>">
-                            <input type="submit" value="edit">
-                        </form>
+                        <button class="edit" type="button">edit</button>
                     </td>
                     <td>
-                        <form>
-                            <input name="id" type="hidden" value="<%= allTasks.id %>">
-                            <input type="submit" value="delete">
-                        </form>
+                        <button class="delete" type="button">delete</button>
                     </td>
                 </tr>
             <% }) %>
