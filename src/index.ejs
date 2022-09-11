@@ -20,9 +20,9 @@
             </tr>
         </thead>
         <tbody>
-            <% allTasks.forEach((data) => { %>
+            <% allTasks.forEach((allTasks) => { %>
                 <tr>
-                    <td><%= data.text %></td>
+                    <td><%= allTasks.text %></td>
                     <td>
                         <input class="task-id" type="hidden" value="<%= allTasks.id %>">
                         <button class="display" type="button">display</button>

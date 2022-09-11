@@ -47,10 +47,9 @@ function createWindow() {
       throw err
     }
     createHtml({allTasks: allTasks}, './src/index.ejs', './dist/index.html')
+    // and load the index.html of the app.
+    mainWindow.loadFile('./dist/index.html')
   })
-
-  // and load the index.html of the app.
-  mainWindow.loadFile('./dist/index.html')
 
   // Open the DevTools.
   // mainWindow.webContents.openDevTools()
