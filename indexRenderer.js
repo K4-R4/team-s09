@@ -9,7 +9,21 @@ document.getElementById('add').addEventListener('click', async () => {
     await window.api.detail()
 })
 /*TODO
-delete function*/
+delete function*/ 
+
+let deletebtn =document.querySelectorAll(".delete")
+deletebtn.forEach(target => {
+    target.addEventListener('click',async () => {
+        let task_id = target.value
+        if (task_id === null){
+            console.log("task_id=null")
+        }else{
+            console.log(target.value)
+            await window.api.deleted(target.value)
+        }
+    
+    });
+});
 
 //update.js
 if (document.title === "memo") {
