@@ -47,10 +47,9 @@ function createWindow() {
       throw err
     }
     createHtml({allTasks: allTasks}, './src/index.ejs', './dist/index.html')
+    // and load the index.html of the app.
+    mainWindow.loadFile('./dist/index.html')
   })
-
-  // and load the index.html of the app.
-  mainWindow.loadFile('./dist/index.html')
 
   // Open the DevTools.
   // mainWindow.webContents.openDevTools()
@@ -120,6 +119,18 @@ ipcMain.handle('save', (event, data) => {
   return
 })
 
+/*TODO
+toddle disply function*/
+ipcMain.handle('toggleDisplay', (event, taskId) => {
+  db.get("SELECT display FROM data WHERE id = ?", taskId, (err, row) => {
+    if (err) throw err
+    let displayOrNot = row['display']
+    displayOrNot = displayOrNot === 0 ? 1:0
+    console.log(displayOrNot)
+    db.run("UPDATE data SET display = ? WHERE id = ?", displayOrNot, taskId)
+  })
+  return
+})
 
 /*TODO
 edit function*/
@@ -148,6 +159,4 @@ ipcMain.handle("deleted",(event,task_id)=>{
   console.log("delelement : " +task_id)
   db.run("delete from data where id = ?",task_id)
   
-
-
 })
