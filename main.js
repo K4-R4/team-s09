@@ -119,6 +119,18 @@ ipcMain.handle('save', (event, data) => {
   return
 })
 
+/*TODO
+toddle disply function*/
+ipcMain.handle('toggleDisplay', (event, taskId) => {
+  db.get("SELECT display FROM data WHERE id = ?", taskId, (err, row) => {
+    if (err) throw err
+    let displayOrNot = row['display']
+    displayOrNot = displayOrNot === 0 ? 1:0
+    console.log(displayOrNot)
+    db.run("UPDATE data SET display = ? WHERE id = ?", displayOrNot, taskId)
+  })
+  return
+})
 
 /*TODO
 edit function*/
