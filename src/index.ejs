@@ -21,11 +21,15 @@
             </tr>
         </thead>
         <tbody>
-            <% allTasks.forEach((data) => { %>
+            <% allTasks.forEach((task) => { %>
                 <tr>
+<<<<<<< HEAD
                     <td><ul><%= data.text %></ul></td>
+=======
+                    <td><%= task.text %></td>
+>>>>>>> 7fba0605301ca53bf6be6d3cffd828e60e232b1b
                     <td>
-                        <input class="task-id" type="hidden" value="<%= allTasks.id %>">
+                        <input class="task-id" type="hidden" value="<%= task.id %>">
                         <button class="display" type="button">display</button>
                     </td>
                     <td>
