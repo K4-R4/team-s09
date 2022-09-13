@@ -21,7 +21,7 @@
         </thead>
         <tbody>
             <% allTasks.forEach((task) => { %>
-                <tr>
+                <tr id="<%= task.id %>">
                     <td><%= task.text %></td>
                     <td>
                         <input class="task-id" type="hidden" value="<%= task.id %>">

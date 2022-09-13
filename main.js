@@ -147,7 +147,5 @@ ipcMain.handle("updatedbtn", (event, stextarea) => {
 /*TODO
 delete function*/
 ipcMain.handle("deleted",(event,task_id)=>{
-  console.log("delelement : " +task_id)
   db.run("delete from data where id = ?",task_id)
-  
 })
