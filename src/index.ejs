@@ -11,6 +11,7 @@
   <title>memo</title>
 </head>
 <body>
+   <h1>TODO LIST</h1>
     <table>
         <thead>
             <tr>
@@ -22,7 +23,7 @@
         <tbody>
             <% allTasks.forEach((data) => { %>
                 <tr>
-                    <td><%= data.text %></td>
+                    <td><ul><%= data.text %></ul></td>
                     <td>
                         <input class="task-id" type="hidden" value="<%= allTasks.id %>">
                         <button class="display" type="button">display</button>
