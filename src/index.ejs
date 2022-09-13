@@ -21,9 +21,10 @@
             </tr>
         </thead>
         <tbody>
+          
             <% allTasks.forEach((task) => { %>
                 <tr id="<%= task.id %>">
-                    <td><%= task.text %></td>
+                    <td><ul><%= task.text %></ul></td>
                     <td>
                         <input class="task-id" type="hidden" value="<%= task.id %>">
                         <button class="display" type="button">display</button>
@@ -36,10 +37,11 @@
                     </td>
                 </tr>
             <% }) %>
+  
         </tbody>
     </table>
   <form>
-    <button id="add" type="button">add</button>
+    <button id="add" type="button">add TODO</button>
   </form>
   <form method="POST" name="update">
     temp sql primary id

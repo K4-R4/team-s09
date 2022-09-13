@@ -18,6 +18,10 @@ button {
     
 }
 
+/*button.delete{
+    background-color: rgb(253, 107, 107);
+}*/
+
 button:active{
     -webkit-transform: translateY(4px);
     transform: translateY(4px);
@@ -26,7 +30,7 @@ button:active{
 
 h1 {
     border-bottom: 3px solid #aaa; 
-    color: #aaa;
+    color: #555;
    }
 
 table {
@@ -43,13 +47,13 @@ table {
 
 ul {
     color: #404040;
-    border-left: solid 6px #1fa67a;/*左側の線*/
-    border-bottom: solid 2px #dadada;/*下に灰色線*/
+    border-left: solid 6px #d86363;/*左の線*/
+    border-bottom: solid 2px #dadada;/*下灰色線*/
     background: whitesmoke;
     margin-bottom: 0.1px;/*下のバーとの余白*/
     line-height: 1.5;
-    border-radius: 0 15px 15px 0;/*右側の角だけ丸く*/
+    /*border-radius: 0px 15px 15px 0px;/*左角丸く*/
     padding: 0.5em;
-    list-style-type: none!important;/*ポチ消す*/
+    list-style-type: none!important;/*●消す*/
     font-weight: bold;
 }
