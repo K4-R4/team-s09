@@ -5,3 +5,50 @@
 textarea {
     resize: none;
 }
+
+body {
+    margin-top:10px;
+    margin-left:50px;
+    margin-right:50px;
+    margin-bottom:50px;
+    }
+
+button {
+    margin-left:5px;
+}
+
+button:active{
+    -webkit-transform: translateY(4px);
+    transform: translateY(4px);
+    border-bottom: none;
+}
+
+h1 {
+    border-bottom: 3px solid #aaa; 
+    color: #aaa;
+   }
+
+table {
+    color: #111;
+    background: #fffcf4;
+    border-radius :8px;/*角の丸み*/
+    box-shadow :0px 0px 5px silver;/*5px=影*/
+    padding: 0.5em 0.5em 0.5em 2em;
+    padding: 0.5em;
+    border-top: #aaa solid 1px;
+    border-bottom: #aaa solid 1px;
+    margin-bottom:30px;
+}
+
+ul {
+    color: #404040;
+    border-left: solid 6px #1fa67a;/*左側の線*/
+    border-bottom: solid 2px #dadada;/*下に灰色線*/
+    background: whitesmoke;
+    margin-bottom: 0.1px;/*下のバーとの余白*/
+    line-height: 1.5;
+    border-radius: 0 15px 15px 0;/*右側の角だけ丸く*/
+    padding: 0.5em;
+    list-style-type: none!important;/*ポチ消す*/
+    font-weight: bold;
+}
