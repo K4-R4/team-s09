@@ -52,7 +52,6 @@ ul {
     background: whitesmoke;
     margin-bottom: 0.1px;/*下のバーとの余白*/
     line-height: 1.5;
-    /*border-radius: 0px 15px 15px 0px;/*左角丸く*/
     padding: 0.5em;
     list-style-type: none!important;/*●消す*/
     font-weight: bold;
