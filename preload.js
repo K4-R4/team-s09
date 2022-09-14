@@ -14,5 +14,7 @@ contextBridge.exposeInMainWorld('api', {
   updatedbtn: async (stextarea) => await ipcRenderer.invoke("updatedbtn", stextarea),
   /*TODO
   delete function*/
-  deleted: async (task_id) => await ipcRenderer.invoke("deleted", task_id)
+  deleted: async (task_id) => await ipcRenderer.invoke("deleted", task_id),
+  displayTasks: async () => await ipcRenderer.invoke('displayTasks'),
+  restoreOriginalWallpaper: async () => await ipcRenderer.invoke('restoreOriginalWallpaper')
 })

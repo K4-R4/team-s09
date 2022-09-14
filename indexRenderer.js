@@ -45,6 +45,14 @@ for (let i = 0, len = deletes.length; i < len; i++) {
     });
 };
 
+document.getElementById('displayTasks').addEventListener('click', async () => {
+    await window.api.displayTasks()
+})
+
+document.getElementById('restoreOriginalWallpaper').addEventListener('click', async () => {
+    await window.api.restoreOriginalWallpaper()
+})
+
 //update.js
 if (document.title === "memo") {
     document.getElementById("editbtn").addEventListener("click", async () => {
