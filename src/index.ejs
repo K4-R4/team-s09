@@ -21,10 +21,10 @@
             </tr>
         </thead>
         <tbody>
-          
+          <ul>
             <% allTasks.forEach((task) => { %>
                 <tr id="<%= task.id %>">
-                    <td><ul><%= task.text %></ul></td>
+                    <td><li><%= task.text %></li></td>
                     <td>
                         <input class="task-id" type="hidden" value="<%= task.id %>">
                         <button class="display" type="button">display</button>
@@ -37,7 +37,7 @@
                     </td>
                 </tr>
             <% }) %>
-  
+          </ul>
         </tbody>
     </table>
   <form>
