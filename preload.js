@@ -5,6 +5,7 @@ const { contextBridge, ipcRenderer } = require('electron')
 contextBridge.exposeInMainWorld('api', {
   detail: async () => await ipcRenderer.invoke('detail'),
   save: async (data) => await ipcRenderer.invoke('save', data),
+  toggleDisplay: async (taskId) => await ipcRenderer.invoke('toggleDisplay', taskId), 
   /*TODO
   edit function*/
   updated: async (number) => await ipcRenderer.invoke("update", number),
