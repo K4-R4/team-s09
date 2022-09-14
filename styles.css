@@ -5,3 +5,70 @@
 textarea {
     resize: none;
 }
+
+body {
+    margin-top:10px;
+    margin-left:50px;
+    margin-right:50px;
+    margin-bottom:50px;
+    }
+
+button {
+    margin-left:10px; 
+    display: inline-block;
+    padding: 0.3em 1em;
+    text-decoration: none;
+    color: #111;   
+    border-radius: 10px;
+    transition: .4s;
+    border: solid 1px #13131379;
+}
+
+button.delete{
+    border: solid 1px #e2131d79;
+}
+
+button.display{
+    border: solid 1px #1374e279;
+}
+
+button.edit{
+    border: solid 1px #13e25179;
+}
+
+button:active{
+    -webkit-transform: translateY(4px);
+    transform: translateY(4px);
+    border-bottom: none;
+}
+
+h1 {
+    border-bottom: 3px solid #aaa; 
+    color: #555;
+   }
+
+table {
+    color: #111;
+    background: #fffcf4;
+    border-radius :8px;/*角の丸み*/
+    box-shadow :0px 0px 5px silver;
+    padding: 0.5em 0.5em 0.5em 2em;
+    padding: 0.5em;
+    border-top: #aaa solid 1px;
+    border-bottom: #aaa solid 1px;
+    margin-bottom:30px;
+}
+
+li {
+    color: #404040;
+    border-left: solid 6px #d86363;
+    border-bottom: solid 2px #dadada;
+    background: whitesmoke;
+    margin-bottom: 0.1px;
+    line-height: 1.5;
+    padding: 0.5em;
+    list-style-type: none!important;/*●消す*/
+    font-weight: bold;
+    margin-right:20px;
+    margin-left:10px;
+}

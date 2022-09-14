@@ -15,14 +15,21 @@ const db = new sqlite3.Database("./todo.db")
 // 引数dataToPassはテンプレートに渡す値を{key: value, key1: value1}のような連想配列で記述
 // templateFile, outputFileはそれぞれテンプレートのパスと作成されるhtmlファイルのパス
 function createHtml(dataToPass, templateFile, outputFile) {
-  ejs.renderFile(templateFile, dataToPass, function(renderErr, html){
+  ejs.renderFile(templateFile, dataToPass, function(err, html){
 
     // 出力情報 => ejsから作成したhtmlソース
-    if (renderErr) throw renderErr
+    // console.log(err)
+
+    // 出力ファイル名
+    const file = outputFile
 
     // テキストファイルに書き込む
-    fs.writeFileSync(outputFile, String(html), 'utf8', (fileErr) => {
-      if (fileErr) throw fileErr
+    fs.writeFileSync(file, String(html), 'utf8', (err) => {
+      if (err) {
+        console.log(err)
+      } else {
+        console.log('save')
+      }
     });
   });
 }
@@ -30,7 +37,7 @@ function createHtml(dataToPass, templateFile, outputFile) {
 function createWindow() {
   // Create the browser window.
   const mainWindow = new BrowserWindow({
-    width: 800,
+    width: 600,
     height: 600,
     webPreferences: {
       preload: path.join(__dirname, 'preload.js')
@@ -38,11 +45,14 @@ function createWindow() {
   })
 
   db.all("SELECT id, text, display FROM data", function(err, allTasks) {
-    if (err) throw err
+    if (err) {
+      throw err
+    }
     createHtml({allTasks: allTasks}, './src/index.ejs', './dist/index.html')
-    // and load the index.html of the app.
-    mainWindow.loadFile('./dist/index.html')
   })
+
+  // and load the index.html of the app.
+  mainWindow.loadFile('./dist/index.html')
 
   // Open the DevTools.
   // mainWindow.webContents.openDevTools()
@@ -112,6 +122,7 @@ ipcMain.handle('save', (event, data) => {
   return
 })
 
+
 /*TODO
 toddle disply function*/
 ipcMain.handle('toggleDisplay', (event, taskId) => {
@@ -124,6 +135,7 @@ ipcMain.handle('toggleDisplay', (event, taskId) => {
   })
   return
 })
+
 
 /*TODO
 edit function*/
@@ -149,9 +161,7 @@ ipcMain.handle("updatedbtn", (event, stextarea) => {
 /*TODO
 delete function*/
 ipcMain.handle("deleted",(event,task_id)=>{
-  console.log("delelement : " +task_id)
   db.run("delete from data where id = ?",task_id)
-  
 })
 
 ipcMain.handle('displayTasks', () => {

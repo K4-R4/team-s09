@@ -40,7 +40,8 @@ for (let i = 0, len = deletes.length; i < len; i++) {
         if (taskIds[i] === null){
             console.log("task_id=null")
         }else{
-            await window.api.deleted(taskIds[i])
+            await window.api.deleted(taskIds[i])  
+            document.getElementById(taskIds[i]).remove()
         }
     });
 };

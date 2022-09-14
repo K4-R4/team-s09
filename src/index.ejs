@@ -11,6 +11,7 @@
   <title>memo</title>
 </head>
 <body>
+   <h1>TODO LIST</h1>
     <table>
         <thead>
             <tr>
@@ -20,9 +21,10 @@
             </tr>
         </thead>
         <tbody>
+          <ul>
             <% allTasks.forEach((task) => { %>
-                <tr>
-                    <td><%= task.text %></td>
+                <tr id="<%= task.id %>">
+                    <td><li><%= task.text %></li></td>
                     <td>
                         <input class="task-id" type="hidden" value="<%= task.id %>">
                         <button class="display" type="button">display</button>
@@ -35,10 +37,11 @@
                     </td>
                 </tr>
             <% }) %>
+          </ul>
         </tbody>
     </table>
   <form>
-    <button id="add" type="button">add</button>
+    <button id="add" type="button">add TODO</button>
   </form>
   <form method="POST" name="update">
     temp sql primary id
