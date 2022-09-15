@@ -27,7 +27,8 @@
                     <td><li><%= task.text %></li></td>
                     <td>
                         <input class="task-id" type="hidden" value="<%= task.id %>">
-                        <button class="display" type="button">display</button>
+                        
+                        <button class="display" type="button" id="display<%= task.display %>">display</button>
                     </td>
                     <td>
                         <button class="edit" type="button">edit</button>

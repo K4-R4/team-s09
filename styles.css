@@ -32,6 +32,10 @@ button.display{
     border: solid 1px #1374e279;
 }
 
+button#display0{
+    color:rgba(11, 15, 245, 0.281)
+}
+
 button.edit{
     border: solid 1px #13e25179;
 }
