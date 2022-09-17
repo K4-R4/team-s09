@@ -23,7 +23,7 @@ function createHtml(dataToPass, templateFile, outputFile) {
   });
 }
 
-function createWindow(windowName, windowOptions, fileToLoad) {
+function createWindow(windowOptions, fileToLoad) {
   // Create the browser window.
   const window = new BrowserWindow(windowOptions)
   // and load the index.html of the app.
