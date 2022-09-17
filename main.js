@@ -37,8 +37,7 @@ app.whenReady().then(() => {
   db.all("SELECT id, text, display FROM data", function(err, allTasks) {
     if (err) throw err
     createHtml({allTasks: allTasks}, './src/index.ejs', './dist/index.html')
-    createWindow("mainWindow",
-    {
+    createWindow({
       width: 600,
       height: 600,
       webPreferences: {
@@ -66,8 +65,7 @@ app.on('window-all-closed', function () {
 
 // Open detail window
 ipcMain.handle('detail', () => {
-  createWindow("detailWindow",
-  {
+  createWindow({
     width: 400,
     height: 300,
     webPreferences: {
@@ -109,10 +107,8 @@ edit function*/
 ipcMain.handle('edit', (event, task_id) => {
   db.get("SELECT id, text FROM data WHERE id = ?", task_id, (err, task) => {
     if (err) throw err
-    console.log(task)
     createHtml({task: task}, './src/edit.ejs', './dist/edit.html')
-    createWindow("editWindow",
-    {
+    createWindow({
       width: 400,
       height: 300,
       webPreferences: {

@@ -11,7 +11,18 @@
   <title>memo</title>
 </head>
 <body>
-   <h1>TODO LIST</h1>
+  <div class="Header">
+    背景
+    <button id="displayTasks" type="button">タスクを背景に表示する</button>
+    <button id="restoreOriginalWallpaper" type="button">元の背景画像に戻す</button>
+  </div>
+  <div class="Contents">
+    <h1>TODO LIST</h1>
+    <div class='add'>
+      <form>
+        <button id="add" type="button">add TODO</button>
+      </form>
+    </div>
     <table>
         <thead>
             <tr>
@@ -23,12 +34,27 @@
         <tbody>
           <ul>
             
+                <tr id="1">
+                    <td><li>1</li></td>
+                    <td>
+                        <input class="task-id" type="hidden" value="1">
+                        
+                        <button class="display" type="button" id="display0">display</button>
+                    </td>
+                    <td>
+                        <button class="edit" type="button">edit</button>
+                    </td>
+                    <td>
+                        <button class="delete" type="button">delete</button>
+                    </td>
+                </tr>
+            
                 <tr id="2">
-                    <td><li>編集編集編集</li></td>
+                    <td><li>2</li></td>
                     <td>
                         <input class="task-id" type="hidden" value="2">
                         
-                        <button class="display" type="button" id="display1">display</button>
+                        <button class="display" type="button" id="display0">display</button>
                     </td>
                     <td>
                         <button class="edit" type="button">edit</button>
@@ -632,7 +658,7 @@
                     <td>
                         <input class="task-id" type="hidden" value="42">
                         
-                        <button class="display" type="button" id="display1">display</button>
+                        <button class="display" type="button" id="display0">display</button>
                     </td>
                     <td>
                         <button class="edit" type="button">edit</button>
@@ -647,7 +673,7 @@
                     <td>
                         <input class="task-id" type="hidden" value="43">
                         
-                        <button class="display" type="button" id="display1">display</button>
+                        <button class="display" type="button" id="display0">display</button>
                     </td>
                     <td>
                         <button class="edit" type="button">edit</button>
@@ -912,32 +938,12 @@
                     </td>
                 </tr>
             
-                <tr id="61">
-                    <td><li>trea</li></td>
-                    <td>
-                        <input class="task-id" type="hidden" value="61">
-                        
-                        <button class="display" type="button" id="display0">display</button>
-                    </td>
-                    <td>
-                        <button class="edit" type="button">edit</button>
-                    </td>
-                    <td>
-                        <button class="delete" type="button">delete</button>
-                    </td>
-                </tr>
-            
           </ul>
         </tbody>
     </table>
   <form>
     <button id="add" type="button">add TODO</button>
   </form>
-
-  <button id="displayTasks" type="button">タスクを背景に表示する</button>
-  <button id="restoreOriginalWallpaper" type="button">元の背景画像に戻す</button>
-
-
   <!-- You can also require other files to run in this process -->
   <script src="../indexRenderer.js"></script>
 </body>
