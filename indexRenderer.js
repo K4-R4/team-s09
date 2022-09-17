@@ -30,6 +30,15 @@ for (let i = 0, len = displays.length; i < len; i++) {
     })
 }
 
+/*TODO
+edit function*/
+var edits = document.querySelectorAll('.edit')
+for (let i = 0, len = edits.length; i < len; i++) {
+    edits[i].addEventListener('click', () => {
+        window.api.edit(taskIds[i])
+    })
+}
+
 
 /*TODO
 delete function*/ 
@@ -53,12 +62,3 @@ document.getElementById('displayTasks').addEventListener('click', async () => {
 document.getElementById('restoreOriginalWallpaper').addEventListener('click', async () => {
     await window.api.restoreOriginalWallpaper()
 })
-
-//update.js
-if (document.title === "memo") {
-    document.getElementById("editbtn").addEventListener("click", async () => {
-        //alert("編集画面を開きます");
-        let number = document.getElementById("number").value;
-        await window.api.updated(number)
-    })
-}

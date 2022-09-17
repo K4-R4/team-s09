@@ -70,15 +70,16 @@ function createDetailWindow() {
   detailWindow.loadFile('./detail.html')
 }
 
-function creareUpdatewindow() {
-  const updatewindow = new BrowserWindow({
+function createEditWindow(task) {
+  const editWindow = new BrowserWindow({
     width: 300,
     height: 300,
     webPreferences: {
-      pleload: path.join(__dirname, "preload.js")
+      preload: path.join(__dirname, 'preload.js')
     }
   })
-  updatewindow.loadFile("updated.html")
+  createHtml({task: task}, './src/edit.ejs', './dist/edit.html')
+  editWindow.loadFile('./dist/edit.html')
 }
 
 // This method will be called when Electron has finished
@@ -139,23 +140,17 @@ ipcMain.handle('toggleDisplay', (event, taskId) => {
 
 /*TODO
 edit function*/
-
-//id get complete
-ipcMain.handle("update", (event, number) => {
-  creareUpdatewindow()
-  console.log(typeof (number))
-  let id = parseFloat(number)
-  console.log(typeof (id))
-  db.run("UPDATE data SET text = ? WHERE id = ?", number, id)
-  return
+ipcMain.handle('edit', (event, task_id) => {
+  db.get("SELECT id, text FROM data WHERE id = ?", task_id, (err, task) => {
+    if (err) throw err
+    console.log(task)
+    createEditWindow(task)
+  })
 })
 
-
-ipcMain.handle("updatedbtn", (event, stextarea) => {
-  console.log(stextarea)
-  const currentupdatedWindow = BrowserWindow.getFocusedWindow()
-  currentupdatedWindow.close()
-  return
+ipcMain.handle('saveChange', (event, task_id, data) => {
+  db.run("UPDATE data SET text = ? WHERE id = ?", data, task_id)
+  console.log("updated")
 })
 
 /*TODO

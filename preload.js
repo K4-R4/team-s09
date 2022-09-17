@@ -8,8 +8,8 @@ contextBridge.exposeInMainWorld('api', {
   toggleDisplay: async (taskId) => await ipcRenderer.invoke('toggleDisplay', taskId), 
   /*TODO
   edit function*/
-  updated: async (number) => await ipcRenderer.invoke("update", number),
-  updatedbtn: async (stextarea) => await ipcRenderer.invoke("updatedbtn", stextarea),
+  edit: async (task_id) => ipcRenderer.invoke('edit', task_id),
+  saveChange: async(task_id, data) => await ipcRenderer.invoke('saveChange', task_id, data),
   /*TODO
   delete function*/
   deleted: async (task_id) => await ipcRenderer.invoke("deleted", task_id),
