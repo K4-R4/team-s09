@@ -55,6 +55,10 @@ for (let i = 0, len = deletes.length; i < len; i++) {
     });
 };
 
+document.getElementById('openSettings').addEventListener('click', () => {
+    window.api.openSettings()
+})
+
 document.getElementById('displayTasks').addEventListener('click', async () => {
     await window.api.displayTasks()
 })

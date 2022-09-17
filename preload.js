@@ -14,6 +14,7 @@ contextBridge.exposeInMainWorld('api', {
   delete function*/
   deleted: async (task_id) => await ipcRenderer.invoke("deleted", task_id),
   displayTasks: async () => await ipcRenderer.invoke('displayTasks'),
-  restoreOriginalWallpaper: async () => await ipcRenderer.invoke('restoreOriginalWallpaper')
-
+  restoreOriginalWallpaper: async () => await ipcRenderer.invoke('restoreOriginalWallpaper'),
+  openSettings: async () => await ipcRenderer.invoke('openSettings'),
+  saveSettings: async (taskPosition) => await ipcRenderer.invoke('saveSettings', taskPosition)
 })

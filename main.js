@@ -6,9 +6,14 @@ const ejs = require('ejs')
 const fs = require('fs')
 const jimp = require('jimp')
 const wallpaper = require('wallpaper')
-const store = require('store')
+const Store = require('electron-store')
+const store = new Store()
 
 const db = new sqlite3.Database("./todo.db")
+
+const settings = {
+  taskPosition: store.get('taskPosition') || [0, 0]
+}
 
 // Create html file from ejs template
 // 引数dataToPassはテンプレートに渡す値を{key: value, key1: value1}のような連想配列で記述
@@ -130,10 +135,30 @@ ipcMain.handle("deleted",(event,task_id)=>{
   db.run("delete from data where id = ?",task_id)
 })
 
+ipcMain.handle('openSettings', () => {
+  createHtml({settings: settings}, './src/settings.ejs', './dist/settings.html')
+  createWindow({
+    width: 400,
+    height: 300,
+    webPreferences: {
+      preload: path.join(__dirname, 'preload.js')
+    }
+  }, './dist/settings.html')
+})
+
+ipcMain.handle('saveSettings', (event, taskPosition) => {
+  store.set('taskPosition', taskPosition)
+  dialog.showMessageBoxSync({
+    message: "設定を反映するためにはアプリケーションの再起動が必要です",
+    type: "warning"})
+  const currentWindow = BrowserWindow.getFocusedWindow()
+  currentWindow.close()
+})
+
 ipcMain.handle('displayTasks', () => {
   db.all("SELECT text FROM data WHERE display = true", function (dbErr, rows) {
-    let x = 0
-    let y = 0
+    let x = Number(settings['taskPosition'][0])
+    let y = Number(settings['taskPosition'][1])
     if (dbErr) throw dbErr
     let loadedImage
     // タスクを書き込む背景画像を読み込む
