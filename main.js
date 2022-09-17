@@ -1,13 +1,12 @@
 // Modules to control application life and create native browser window
 const { app, BrowserWindow, ipcMain, dialog } = require('electron')
 const path = require('path')
-const { title } = require('process')
-const { toUnicode } = require('punycode')
 const sqlite3 = require('sqlite3')
 const ejs = require('ejs')
 const fs = require('fs')
 const jimp = require('jimp')
 const wallpaper = require('wallpaper')
+const store = require('store')
 
 const db = new sqlite3.Database("./todo.db")
 
@@ -15,78 +14,38 @@ const db = new sqlite3.Database("./todo.db")
 // 引数dataToPassはテンプレートに渡す値を{key: value, key1: value1}のような連想配列で記述
 // templateFile, outputFileはそれぞれテンプレートのパスと作成されるhtmlファイルのパス
 function createHtml(dataToPass, templateFile, outputFile) {
-  ejs.renderFile(templateFile, dataToPass, function(err, html){
-
-    // 出力情報 => ejsから作成したhtmlソース
-    // console.log(err)
-
-    // 出力ファイル名
-    const file = outputFile
-
-    // テキストファイルに書き込む
-    fs.writeFileSync(file, String(html), 'utf8', (err) => {
-      if (err) {
-        console.log(err)
-      } else {
-        console.log('save')
-      }
+  ejs.renderFile(templateFile, dataToPass, function(renderErr, html){
+    if (renderErr) throw renderErr
+    // ejsから作成したhtmlソースをテキストファイルに書き込む
+    fs.writeFileSync(outputFile, String(html), 'utf8', (writeErr) => {
+      if (writeErr) throw writeErr
     });
   });
 }
 
-function createWindow() {
+function createWindow(windowName, windowOptions, fileToLoad) {
   // Create the browser window.
-  const mainWindow = new BrowserWindow({
-    width: 600,
-    height: 600,
-    webPreferences: {
-      preload: path.join(__dirname, 'preload.js')
-    }
-  })
-
-  db.all("SELECT id, text, display FROM data", function(err, allTasks) {
-    if (err) {
-      throw err
-    }
-    createHtml({allTasks: allTasks}, './src/index.ejs', './dist/index.html')
-  })
-
+  const window = new BrowserWindow(windowOptions)
   // and load the index.html of the app.
-  mainWindow.loadFile('./dist/index.html')
-
-  // Open the DevTools.
-  // mainWindow.webContents.openDevTools()
-}
-
-function createDetailWindow() {
-  const detailWindow = new BrowserWindow({
-    width: 400,
-    height: 300,
-    webPreferences: {
-      preload: path.join(__dirname, 'preload.js')
-    }
-  })
-
-  detailWindow.loadFile('./detail.html')
-}
-
-function createEditWindow(task) {
-  const editWindow = new BrowserWindow({
-    width: 300,
-    height: 300,
-    webPreferences: {
-      preload: path.join(__dirname, 'preload.js')
-    }
-  })
-  createHtml({task: task}, './src/edit.ejs', './dist/edit.html')
-  editWindow.loadFile('./dist/edit.html')
+  window.loadFile(fileToLoad)
 }
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 app.whenReady().then(() => {
-  createWindow()
+  db.all("SELECT id, text, display FROM data", function(err, allTasks) {
+    if (err) throw err
+    createHtml({allTasks: allTasks}, './src/index.ejs', './dist/index.html')
+    createWindow("mainWindow",
+    {
+      width: 600,
+      height: 600,
+      webPreferences: {
+        preload: path.join(__dirname, 'preload.js')
+      }
+    }, './dist/index.html')
+  })
 
   app.on('activate', function () {
     // On macOS it's common to re-create a window in the app when the
@@ -107,7 +66,14 @@ app.on('window-all-closed', function () {
 
 // Open detail window
 ipcMain.handle('detail', () => {
-  createDetailWindow()
+  createWindow("detailWindow",
+  {
+    width: 400,
+    height: 300,
+    webPreferences: {
+      preload: path.join(__dirname, 'preload.js')
+    }
+  }, './detail.html')
   return
 })
 
@@ -144,13 +110,22 @@ ipcMain.handle('edit', (event, task_id) => {
   db.get("SELECT id, text FROM data WHERE id = ?", task_id, (err, task) => {
     if (err) throw err
     console.log(task)
-    createEditWindow(task)
+    createHtml({task: task}, './src/edit.ejs', './dist/edit.html')
+    createWindow("editWindow",
+    {
+      width: 400,
+      height: 300,
+      webPreferences: {
+        preload: path.join(__dirname, 'preload.js')
+      }
+    }, './dist/edit.html')
   })
 })
 
 ipcMain.handle('saveChange', (event, task_id, data) => {
   db.run("UPDATE data SET text = ? WHERE id = ?", data, task_id)
-  console.log("updated")
+  const currentWindow = BrowserWindow.getFocusedWindow()
+  currentWindow.close()
 })
 
 /*TODO
