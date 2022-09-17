@@ -11,7 +11,18 @@
   <title>memo</title>
 </head>
 <body>
-   <h1>TODO LIST</h1>
+  <div class="Header">
+    背景
+    <button id="displayTasks" type="button">タスクを背景に表示する</button>
+    <button id="restoreOriginalWallpaper" type="button">元の背景画像に戻す</button>
+  </div>
+  <div class="Contents">
+    <h1>TODO LIST</h1>
+    <div class='add'>
+      <form>
+        <button id="add" type="button">add TODO</button>
+      </form>
+    </div>
     <table>
         <thead>
             <tr>
@@ -44,11 +55,6 @@
   <form>
     <button id="add" type="button">add TODO</button>
   </form>
-
-  <button id="displayTasks" type="button">タスクを背景に表示する</button>
-  <button id="restoreOriginalWallpaper" type="button">元の背景画像に戻す</button>
-
-
   <!-- You can also require other files to run in this process -->
   <script src="../indexRenderer.js"></script>
 </body>
