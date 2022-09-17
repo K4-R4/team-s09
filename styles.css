@@ -11,7 +11,28 @@ body {
     margin-left:50px;
     margin-right:50px;
     margin-bottom:50px;
-    }
+}
+
+.Header {
+    position: fixed; /* ヘッダーを固定する */
+    top: 0; /* 上部から配置の基準位置を決める */
+    left: 0; /* 左から配置の基準位置を決める */
+    width: 100%; /* ヘッダーの横幅を指定する */
+    height: 35px; /* ヘッダーの高さを指定する */
+    padding: 10px; /* ヘッダーの余白を指定する(上下左右) */
+    background-color: #0a0a0a80; /* ヘッダーの背景色を指定する */
+    color: #000000; /* フォントの色を指定する */
+}
+
+.Contents {
+    width: 100%; /* コンテンツの横幅を指定する */
+    margin-top: 80px;
+}
+
+.add {
+    display: flex;
+    justify-content: flex-end;
+}
 
 button {
     margin-left:10px; 
@@ -32,7 +53,7 @@ button.display{
     border: solid 1px #1374e279;
 }
 
-button#display0{
+button#display0{/*display offのときの色*/
     color:rgba(11, 15, 245, 0.281)
 }
 
@@ -61,7 +82,7 @@ table {
     border-top: #aaa solid 1px;
     border-bottom: #aaa solid 1px;
     margin-bottom:30px;
-    width: 90%;
+    width: 100%;
 }
 
 li {
