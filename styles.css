@@ -29,6 +29,11 @@ body {
     margin-top: 80px;
 }
 
+.background {
+    display: flex;
+    justify-content: flex-end;
+}
+
 .add {
     display: flex;
     justify-content: flex-end;
