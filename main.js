@@ -11,8 +11,12 @@ const store = new Store()
 
 const db = new sqlite3.Database("./todo.db")
 
-const settings = {
-  taskPosition: store.get('taskPosition') || [0, 0]
+var settings = {}
+
+function loadSettings() {
+  settings = {
+    taskPosition: store.get('taskPosition') || [0, 0]
+}
 }
 
 // Create html file from ejs template
@@ -33,12 +37,14 @@ function createWindow(windowOptions, fileToLoad) {
   const window = new BrowserWindow(windowOptions)
   // and load the index.html of the app.
   window.loadFile(fileToLoad)
+  console.log(settings)
 }
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 app.whenReady().then(() => {
+  loadSettings()
   db.all("SELECT id, text, display FROM data", function(err, allTasks) {
     if (err) throw err
     createHtml({allTasks: allTasks}, './src/index.ejs', './dist/index.html')
@@ -148,9 +154,7 @@ ipcMain.handle('openSettings', () => {
 
 ipcMain.handle('saveSettings', (event, taskPosition) => {
   store.set('taskPosition', taskPosition)
-  dialog.showMessageBoxSync({
-    message: "設定を反映するためにはアプリケーションの再起動が必要です",
-    type: "warning"})
+  loadSettings()
   const currentWindow = BrowserWindow.getFocusedWindow()
   currentWindow.close()
 })
@@ -174,7 +178,7 @@ ipcMain.handle('displayTasks', () => {
           y = y + 32 + 16
         }
         loadedImage.write('modifiedWallpaper.jpg')
-        console.log("modified base wallpaper")
+        // console.log("modified base wallpaper")
       })
       .then(function () {
         // 差し替える前の背景画像のパスを取得する
@@ -182,17 +186,17 @@ ipcMain.handle('displayTasks', () => {
       })
       .then(function (originalWallpaperPath) {
         // 取得したパスを用いてオリジナルの背景画像をコピーする
-        console.log(originalWallpaperPath)
-        console.log(path.join(__dirname, './originalWallpaper.jpg'))
+        // console.log(originalWallpaperPath)
+        // console.log(path.join(__dirname, './originalWallpaper.jpg'))
         if (originalWallpaperPath != path.join(__dirname, './modifiedWallpaper.jpg')) {
-          fs.copyFileSync(originalWallpaperPath, './originalWallpaper.jpg')
-          console.log("saved original wallpaper")
+          fs.copyFileSync(originalWallpaperPath, app.getPath('userData') + '\\originalWallpaper.jpg')
+          // console.log("saved original wallpaper")
         }
       })
       .then(function () {
         // タスクを書き込んだ背景画像に差し替える
         wallpaper.set('modifiedWallpaper.jpg')
-        console.log("changed to modified wallpaper")
+        // console.log("changed to modified wallpaper")
       })
       // エラーを出力
       .catch(function (err) {
@@ -203,6 +207,6 @@ ipcMain.handle('displayTasks', () => {
 })
 
 ipcMain.handle('restoreOriginalWallpaper', async () => {
-  await wallpaper.set('./originalWallpaper.jpg')
+  await wallpaper.set(app.getPath('userData') + '\\originalWallpaper.jpg')
   return
 })
