@@ -1,43 +1,43 @@
 // Modules to control application life and create native browser window
 const { app, BrowserWindow, ipcMain, dialog } = require('electron')
 const path = require('path')
-const { title } = require('process')
-const { toUnicode } = require('punycode')
 const sqlite3 = require('sqlite3')
 const ejs = require('ejs')
 const fs = require('fs')
 const jimp = require('jimp')
 const wallpaper = require('wallpaper')
-const { maxHeaderSize } = require('http')
+
+const Store = require('electron-store')
+const store = new Store()
+
 const db = new sqlite3.Database("./todo.db")
 var mainWindowid = null
 
+
+var settings = {}
+
+function loadSettings() {
+  settings = {
+    taskPosition: store.get('taskPosition') || [0, 0]
+}
+}
 
 // Create html file from ejs template
 // 引数dataToPassはテンプレートに渡す値を{key: value, key1: value1}のような連想配列で記述
 // templateFile, outputFileはそれぞれテンプレートのパスと作成されるhtmlファイルのパス
 function createHtml(dataToPass, templateFile, outputFile) {
-  ejs.renderFile(templateFile, dataToPass, function(err, html){
-
-    // 出力情報 => ejsから作成したhtmlソース
-    // console.log(err)
-
-    // 出力ファイル名
-    const file = outputFile
-
-    // テキストファイルに書き込む
-    fs.writeFileSync(file, String(html), 'utf8', (err) => {
-      if (err) {
-        console.log(err)
-      } else {
-        console.log('save')
-      }
+  ejs.renderFile(templateFile, dataToPass, function(renderErr, html){
+    if (renderErr) throw renderErr
+    // ejsから作成したhtmlソースをテキストファイルに書き込む
+    fs.writeFileSync(outputFile, String(html), 'utf8', (writeErr) => {
+      if (writeErr) throw writeErr
     });
   });
 }
 
-function createWindow() {
+function createWindow(windowOptions, fileToLoad) {
   // Create the browser window.
+/*<<<<<<< HEAD
   const mainWindow = new BrowserWindow({
     width: 600,
     height: 600,
@@ -46,7 +46,7 @@ function createWindow() {
       
     }
   })
-  mainWindowid = mainWindow.id
+  
   db.all("SELECT id, text, display FROM data", function(err, allTasks) {
     if (err) {
       throw err
@@ -54,41 +54,30 @@ function createWindow() {
     createHtml({allTasks: allTasks}, './src/index.ejs', './dist/index.html')
   })
 
+=======*/
+  const window = new BrowserWindow(windowOptions)
+  mainWindowid = window.id
+//>>>>>>> 03e0bcfa520d337e3f13405dd48e713ffee64c71
   // and load the index.html of the app.
-  mainWindow.loadFile('./dist/index.html')
-
-  // Open the DevTools.
-  // mainWindow.webContents.openDevTools()
-}
-
-function createDetailWindow() {
-  const detailWindow = new BrowserWindow({
-    width: 400,
-    height: 300,
-    webPreferences: {
-      preload: path.join(__dirname, 'preload.js')
-    }
-  })
-
-  detailWindow.loadFile('./detail.html')
-}
-
-function creareUpdatewindow() {
-  const updatewindow = new BrowserWindow({
-    width: 300,
-    height: 300,
-    webPreferences: {
-      pleload: path.join(__dirname, "preload.js")
-    }
-  })
-  updatewindow.loadFile("updated.html")
+  window.loadFile(fileToLoad)
 }
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 app.whenReady().then(() => {
-  createWindow()
+  loadSettings()
+  db.all("SELECT id, text, display FROM data", function(err, allTasks) {
+    if (err) throw err
+    createHtml({allTasks: allTasks}, './src/index.ejs', './dist/index.html')
+    createWindow({
+      width: 600,
+      height: 600,
+      webPreferences: {
+        preload: path.join(__dirname, 'preload.js')
+      }
+    }, './dist/index.html')
+  })
 
   app.on('activate', function () {
     // On macOS it's common to re-create a window in the app when the
@@ -109,7 +98,13 @@ app.on('window-all-closed', function () {
 
 // Open detail window
 ipcMain.handle('detail', () => {
-  createDetailWindow()
+  createWindow({
+    width: 400,
+    height: 300,
+    webPreferences: {
+      preload: path.join(__dirname, 'preload.js')
+    }
+  }, './detail.html')
   return
 })
 
@@ -162,23 +157,24 @@ ipcMain.handle('toggleDisplay', (event, taskId) => {
 
 /*TODO
 edit function*/
-
-//id get complete
-ipcMain.handle("update", (event, number) => {
-  creareUpdatewindow()
-  console.log(typeof (number))
-  let id = parseFloat(number)
-  console.log(typeof (id))
-  db.run("UPDATE data SET text = ? WHERE id = ?", number, id)
-  return
+ipcMain.handle('edit', (event, task_id) => {
+  db.get("SELECT id, text FROM data WHERE id = ?", task_id, (err, task) => {
+    if (err) throw err
+    createHtml({task: task}, './src/edit.ejs', './dist/edit.html')
+    createWindow({
+      width: 400,
+      height: 300,
+      webPreferences: {
+        preload: path.join(__dirname, 'preload.js')
+      }
+    }, './dist/edit.html')
+  })
 })
 
-
-ipcMain.handle("updatedbtn", (event, stextarea) => {
-  console.log(stextarea)
-  const currentupdatedWindow = BrowserWindow.getFocusedWindow()
-  currentupdatedWindow.close()
-  return
+ipcMain.handle('saveChange', (event, task_id, data) => {
+  db.run("UPDATE data SET text = ? WHERE id = ?", data, task_id)
+  const currentWindow = BrowserWindow.getFocusedWindow()
+  currentWindow.close()
 })
 
 /*TODO
@@ -188,57 +184,54 @@ ipcMain.handle("deleted",(event,task_id)=>{
   db.run("DELETE FROM data WHERE id = ?",task_id)
 })
 
+ipcMain.handle('openSettings', () => {
+  createHtml({settings: settings}, './src/settings.ejs', './dist/settings.html')
+  createWindow({
+    width: 400,
+    height: 300,
+    webPreferences: {
+      preload: path.join(__dirname, 'preload.js')
+    }
+  }, './dist/settings.html')
+})
+
+ipcMain.handle('saveSettings', (event, taskPosition) => {
+  store.set('taskPosition', taskPosition)
+  loadSettings()
+  const currentWindow = BrowserWindow.getFocusedWindow()
+  currentWindow.close()
+})
+
 ipcMain.handle('displayTasks', () => {
-  db.all("SELECT text FROM data WHERE display = true", function (dbErr, rows) {
-    let x = 0
-    let y = 0
+  db.all("SELECT text FROM data WHERE display = true", async function (dbErr, rows) {
+    let x = Number(settings['taskPosition'][0])
+    let y = Number(settings['taskPosition'][1])
     if (dbErr) throw dbErr
-    let loadedImage
-    // タスクを書き込む背景画像を読み込む
-    jimp.read('baseWallpaper.jpg')
-      .then(function (image) {
-        loadedImage = image
-        return jimp.loadFont(jimp.FONT_SANS_32_BLACK)
-      })
-      .then(function (font) {
-        // タスクを書き込み背景画像を保存する
-        for (let i = 0, len = rows.length; i < len; i++) {
-          loadedImage.print(font, x, y, rows[i]["text"])
-          y = y + 32 + 16
-        }
-        loadedImage.write('modifiedWallpaper.jpg')
-        console.log("modified base wallpaper")
-      })
-      .then(function () {
-        // 差し替える前の背景画像のパスを取得する
-        return wallpaper.get()
-      })
-      .then(function (originalWallpaperPath) {
-        // 取得したパスを用いてオリジナルの背景画像をコピーする
-        console.log(originalWallpaperPath)
-        console.log(path.join(__dirname, './originalWallpaper.jpg'))
-        if (originalWallpaperPath != path.join(__dirname, './modifiedWallpaper.jpg')) {
-          fs.copyFileSync(originalWallpaperPath, './originalWallpaper.jpg')
-          .catch( (fileErr) => {
-            if (fileErr) throw (fileErr)
-            })
-          console.log("saved original wallpaper")
-        }
-      })
-      .then(function () {
-        // タスクを書き込んだ背景画像に差し替える
-        wallpaper.set('modifiedWallpaper.jpg')
-        console.log("changed to modified wallpaper")
-      })
-      // エラーを出力
-      .catch(function (err) {
-        if (err) throw err
-      })
+
+    // フォントを読み込む
+    const font = await jimp.loadFont(jimp.FONT_SANS_32_BLACK)
+
+    // タスクを書き込む背景画像を読み込み、タスクを書き込む
+    const image = await jimp.read('baseWallpaper.jpg')
+    for (let i = 0, len = rows.length; i < len; i++) {
+      image.print(font, x, y, rows[i]["text"])
+      y = y + 32 + 16
+    }
+    image.write('modifiedWallpaper.jpg')
+
+    const originalWallpaperPath = await wallpaper.get()
+    if (originalWallpaperPath != path.join(__dirname, './modifiedWallpaper.jpg')) {
+      fs.copyFileSync(originalWallpaperPath, app.getPath('userData') + '\\originalWallpaper.jpg')
+      // console.log("saved original wallpaper")
+    }
+    
+    await wallpaper.set('modifiedWallpaper.jpg')
+
   })
   return
 })
 
 ipcMain.handle('restoreOriginalWallpaper', async () => {
-  await wallpaper.set('./originalWallpaper.jpg')
+  await wallpaper.set(app.getPath('userData') + '\\originalWallpaper.jpg')
   return
 })

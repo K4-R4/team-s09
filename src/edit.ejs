@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'">
+    <link href="../styles.css" rel="stylesheet">
+    <title>edit</title>
+</head>
+<body>
+    <form>
+        <p>
+            <textarea id="data" rows="10" cols="40"><%= task.text %></textarea>
+        </p>
+        <p>
+            <button id="save" type="button" value="<%= task.id %>">save</button>
+        </p>
+    </form>
+    <!-- You can also require other files to run in this process -->
+    <script src="../editRenderer.js"></script>
+</body>
+</html>

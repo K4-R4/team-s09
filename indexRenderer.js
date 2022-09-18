@@ -30,6 +30,15 @@ for (let i = 0, len = displays.length; i < len; i++) {
     })
 }
 
+/*TODO
+edit function*/
+var edits = document.querySelectorAll('.edit')
+for (let i = 0, len = edits.length; i < len; i++) {
+    edits[i].addEventListener('click', () => {
+        window.api.edit(taskIds[i])
+    })
+}
+
 
 /*TODO
 delete function*/ 
@@ -46,6 +55,10 @@ for (let i = 0, len = deletes.length; i < len; i++) {
     });
 };
 
+document.getElementById('openSettings').addEventListener('click', () => {
+    window.api.openSettings()
+})
+
 document.getElementById('displayTasks').addEventListener('click', async () => {
     await window.api.displayTasks()
 })
@@ -53,15 +66,6 @@ document.getElementById('displayTasks').addEventListener('click', async () => {
 document.getElementById('restoreOriginalWallpaper').addEventListener('click', async () => {
     await window.api.restoreOriginalWallpaper()
 })
-
-//update.js
-if (document.title === "memo") {
-    document.getElementById("editbtn").addEventListener("click", async () => {
-        //alert("編集画面を開きます");
-        let number = document.getElementById("number").value;
-        await window.api.updated(number)
-    })
-}
 
 //追加された内容を表示
 window.api.addHTML((_event, value) => {
@@ -73,4 +77,5 @@ window.api.addHTML((_event, value) => {
     //機能が反応するように再読み込み
     taskIds.push(value["id"])
     deletes =document.querySelectorAll(".delete")
+
 })

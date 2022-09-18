@@ -11,7 +11,18 @@
   <title>memo</title>
 </head>
 <body>
-   <h1>TODO LIST</h1>
+  <div class="Header">
+    背景
+    <button id="displayTasks" type="button">タスクを背景に表示する</button>
+    <button id="restoreOriginalWallpaper" type="button">元の背景画像に戻す</button>
+  </div>
+  <div class="Contents">
+    <h1>TODO LIST</h1>
+    <div class='add'>
+      <form>
+        <button id="add" type="button">add TODO</button>
+      </form>
+    </div>
     <table>
         <thead>
             <tr>
@@ -27,7 +38,8 @@
                     <td><li>1</li></td>
                     <td>
                         <input class="task-id" type="hidden" value="1">
-                        <button class="display" type="button">display</button>
+                        
+                        <button class="display" type="button" id="display0">display</button>
                     </td>
                     <td>
                         <button class="edit" type="button">edit</button>
@@ -41,7 +53,8 @@
                     <td><li>2</li></td>
                     <td>
                         <input class="task-id" type="hidden" value="2">
-                        <button class="display" type="button">display</button>
+                        
+                        <button class="display" type="button" id="display0">display</button>
                     </td>
                     <td>
                         <button class="edit" type="button">edit</button>
@@ -55,7 +68,8 @@
                     <td><li>3</li></td>
                     <td>
                         <input class="task-id" type="hidden" value="3">
-                        <button class="display" type="button">display</button>
+                        
+                        <button class="display" type="button" id="display0">display</button>
                     </td>
                     <td>
                         <button class="edit" type="button">edit</button>
@@ -69,7 +83,8 @@
                     <td><li>4</li></td>
                     <td>
                         <input class="task-id" type="hidden" value="4">
-                        <button class="display" type="button">display</button>
+                        
+                        <button class="display" type="button" id="display0">display</button>
                     </td>
                     <td>
                         <button class="edit" type="button">edit</button>
@@ -83,7 +98,8 @@
                     <td><li>5</li></td>
                     <td>
                         <input class="task-id" type="hidden" value="5">
-                        <button class="display" type="button">display</button>
+                        
+                        <button class="display" type="button" id="display0">display</button>
                     </td>
                     <td>
                         <button class="edit" type="button">edit</button>
@@ -97,7 +113,8 @@
                     <td><li>6</li></td>
                     <td>
                         <input class="task-id" type="hidden" value="6">
-                        <button class="display" type="button">display</button>
+                        
+                        <button class="display" type="button" id="display0">display</button>
                     </td>
                     <td>
                         <button class="edit" type="button">edit</button>
@@ -111,7 +128,8 @@
                     <td><li></li></td>
                     <td>
                         <input class="task-id" type="hidden" value="7">
-                        <button class="display" type="button">display</button>
+                        
+                        <button class="display" type="button" id="display0">display</button>
                     </td>
                     <td>
                         <button class="edit" type="button">edit</button>
@@ -125,7 +143,8 @@
                     <td><li>8</li></td>
                     <td>
                         <input class="task-id" type="hidden" value="8">
-                        <button class="display" type="button">display</button>
+                        
+                        <button class="display" type="button" id="display0">display</button>
                     </td>
                     <td>
                         <button class="edit" type="button">edit</button>
@@ -139,7 +158,8 @@
                     <td><li>9</li></td>
                     <td>
                         <input class="task-id" type="hidden" value="9">
-                        <button class="display" type="button">display</button>
+                        
+                        <button class="display" type="button" id="display0">display</button>
                     </td>
                     <td>
                         <button class="edit" type="button">edit</button>
@@ -153,7 +173,8 @@
                     <td><li>10</li></td>
                     <td>
                         <input class="task-id" type="hidden" value="10">
-                        <button class="display" type="button">display</button>
+                        
+                        <button class="display" type="button" id="display0">display</button>
                     </td>
                     <td>
                         <button class="edit" type="button">edit</button>
@@ -167,7 +188,8 @@
                     <td><li>11</li></td>
                     <td>
                         <input class="task-id" type="hidden" value="11">
-                        <button class="display" type="button">display</button>
+                        
+                        <button class="display" type="button" id="display0">display</button>
                     </td>
                     <td>
                         <button class="edit" type="button">edit</button>
@@ -181,7 +203,8 @@
                     <td><li>12</li></td>
                     <td>
                         <input class="task-id" type="hidden" value="12">
-                        <button class="display" type="button">display</button>
+                        
+                        <button class="display" type="button" id="display0">display</button>
                     </td>
                     <td>
                         <button class="edit" type="button">edit</button>
@@ -195,7 +218,8 @@
                     <td><li>dwafd</li></td>
                     <td>
                         <input class="task-id" type="hidden" value="13">
-                        <button class="display" type="button">display</button>
+                        
+                        <button class="display" type="button" id="display0">display</button>
                     </td>
                     <td>
                         <button class="edit" type="button">edit</button>
@@ -209,7 +233,8 @@
                     <td><li>14</li></td>
                     <td>
                         <input class="task-id" type="hidden" value="14">
-                        <button class="display" type="button">display</button>
+                        
+                        <button class="display" type="button" id="display0">display</button>
                     </td>
                     <td>
                         <button class="edit" type="button">edit</button>
@@ -223,7 +248,8 @@
                     <td><li>make</li></td>
                     <td>
                         <input class="task-id" type="hidden" value="15">
-                        <button class="display" type="button">display</button>
+                        
+                        <button class="display" type="button" id="display0">display</button>
                     </td>
                     <td>
                         <button class="edit" type="button">edit</button>
@@ -237,7 +263,8 @@
                     <td><li></li></td>
                     <td>
                         <input class="task-id" type="hidden" value="16">
-                        <button class="display" type="button">display</button>
+                        
+                        <button class="display" type="button" id="display0">display</button>
                     </td>
                     <td>
                         <button class="edit" type="button">edit</button>
@@ -251,7 +278,8 @@
                     <td><li>make</li></td>
                     <td>
                         <input class="task-id" type="hidden" value="17">
-                        <button class="display" type="button">display</button>
+                        
+                        <button class="display" type="button" id="display0">display</button>
                     </td>
                     <td>
                         <button class="edit" type="button">edit</button>
@@ -265,7 +293,8 @@
                     <td><li>wefere</li></td>
                     <td>
                         <input class="task-id" type="hidden" value="18">
-                        <button class="display" type="button">display</button>
+                        
+                        <button class="display" type="button" id="display0">display</button>
                     </td>
                     <td>
                         <button class="edit" type="button">edit</button>
@@ -279,7 +308,8 @@
                     <td><li>19</li></td>
                     <td>
                         <input class="task-id" type="hidden" value="19">
-                        <button class="display" type="button">display</button>
+                        
+                        <button class="display" type="button" id="display0">display</button>
                     </td>
                     <td>
                         <button class="edit" type="button">edit</button>
@@ -293,7 +323,8 @@
                     <td><li>20</li></td>
                     <td>
                         <input class="task-id" type="hidden" value="20">
-                        <button class="display" type="button">display</button>
+                        
+                        <button class="display" type="button" id="display1">display</button>
                     </td>
                     <td>
                         <button class="edit" type="button">edit</button>
@@ -307,7 +338,8 @@
                     <td><li>make</li></td>
                     <td>
                         <input class="task-id" type="hidden" value="21">
-                        <button class="display" type="button">display</button>
+                        
+                        <button class="display" type="button" id="display0">display</button>
                     </td>
                     <td>
                         <button class="edit" type="button">edit</button>
@@ -322,7 +354,8 @@
 </li></td>
                     <td>
                         <input class="task-id" type="hidden" value="22">
-                        <button class="display" type="button">display</button>
+                        
+                        <button class="display" type="button" id="display0">display</button>
                     </td>
                     <td>
                         <button class="edit" type="button">edit</button>
@@ -336,7 +369,8 @@
                     <td><li>23</li></td>
                     <td>
                         <input class="task-id" type="hidden" value="23">
-                        <button class="display" type="button">display</button>
+                        
+                        <button class="display" type="button" id="display0">display</button>
                     </td>
                     <td>
                         <button class="edit" type="button">edit</button>
@@ -350,7 +384,8 @@
                     <td><li></li></td>
                     <td>
                         <input class="task-id" type="hidden" value="24">
-                        <button class="display" type="button">display</button>
+                        
+                        <button class="display" type="button" id="display0">display</button>
                     </td>
                     <td>
                         <button class="edit" type="button">edit</button>
@@ -364,7 +399,8 @@
                     <td><li>make</li></td>
                     <td>
                         <input class="task-id" type="hidden" value="25">
-                        <button class="display" type="button">display</button>
+                        
+                        <button class="display" type="button" id="display0">display</button>
                     </td>
                     <td>
                         <button class="edit" type="button">edit</button>
@@ -378,7 +414,8 @@
                     <td><li>make</li></td>
                     <td>
                         <input class="task-id" type="hidden" value="26">
-                        <button class="display" type="button">display</button>
+                        
+                        <button class="display" type="button" id="display0">display</button>
                     </td>
                     <td>
                         <button class="edit" type="button">edit</button>
@@ -392,7 +429,8 @@
                     <td><li>27</li></td>
                     <td>
                         <input class="task-id" type="hidden" value="27">
-                        <button class="display" type="button">display</button>
+                        
+                        <button class="display" type="button" id="display0">display</button>
                     </td>
                     <td>
                         <button class="edit" type="button">edit</button>
@@ -407,7 +445,8 @@
 </li></td>
                     <td>
                         <input class="task-id" type="hidden" value="28">
-                        <button class="display" type="button">display</button>
+                        
+                        <button class="display" type="button" id="display0">display</button>
                     </td>
                     <td>
                         <button class="edit" type="button">edit</button>
@@ -422,7 +461,8 @@
 </li></td>
                     <td>
                         <input class="task-id" type="hidden" value="29">
-                        <button class="display" type="button">display</button>
+                        
+                        <button class="display" type="button" id="display0">display</button>
                     </td>
                     <td>
                         <button class="edit" type="button">edit</button>
@@ -436,7 +476,8 @@
                     <td><li>a</li></td>
                     <td>
                         <input class="task-id" type="hidden" value="30">
-                        <button class="display" type="button">display</button>
+                        
+                        <button class="display" type="button" id="display0">display</button>
                     </td>
                     <td>
                         <button class="edit" type="button">edit</button>
@@ -450,7 +491,8 @@
                     <td><li>a</li></td>
                     <td>
                         <input class="task-id" type="hidden" value="31">
-                        <button class="display" type="button">display</button>
+                        
+                        <button class="display" type="button" id="display0">display</button>
                     </td>
                     <td>
                         <button class="edit" type="button">edit</button>
@@ -464,7 +506,8 @@
                     <td><li>32</li></td>
                     <td>
                         <input class="task-id" type="hidden" value="32">
-                        <button class="display" type="button">display</button>
+                        
+                        <button class="display" type="button" id="display0">display</button>
                     </td>
                     <td>
                         <button class="edit" type="button">edit</button>
@@ -478,7 +521,8 @@
                     <td><li>make</li></td>
                     <td>
                         <input class="task-id" type="hidden" value="33">
-                        <button class="display" type="button">display</button>
+                        
+                        <button class="display" type="button" id="display0">display</button>
                     </td>
                     <td>
                         <button class="edit" type="button">edit</button>
@@ -492,7 +536,8 @@
                     <td><li>make</li></td>
                     <td>
                         <input class="task-id" type="hidden" value="34">
-                        <button class="display" type="button">display</button>
+                        
+                        <button class="display" type="button" id="display0">display</button>
                     </td>
                     <td>
                         <button class="edit" type="button">edit</button>
@@ -507,7 +552,8 @@
 </li></td>
                     <td>
                         <input class="task-id" type="hidden" value="35">
-                        <button class="display" type="button">display</button>
+                        
+                        <button class="display" type="button" id="display0">display</button>
                     </td>
                     <td>
                         <button class="edit" type="button">edit</button>
@@ -521,7 +567,8 @@
                     <td><li>a</li></td>
                     <td>
                         <input class="task-id" type="hidden" value="36">
-                        <button class="display" type="button">display</button>
+                        
+                        <button class="display" type="button" id="display0">display</button>
                     </td>
                     <td>
                         <button class="edit" type="button">edit</button>
@@ -535,7 +582,8 @@
                     <td><li>37</li></td>
                     <td>
                         <input class="task-id" type="hidden" value="37">
-                        <button class="display" type="button">display</button>
+                        
+                        <button class="display" type="button" id="display0">display</button>
                     </td>
                     <td>
                         <button class="edit" type="button">edit</button>
@@ -549,7 +597,8 @@
                     <td><li>maek</li></td>
                     <td>
                         <input class="task-id" type="hidden" value="38">
-                        <button class="display" type="button">display</button>
+                        
+                        <button class="display" type="button" id="display0">display</button>
                     </td>
                     <td>
                         <button class="edit" type="button">edit</button>
@@ -563,7 +612,8 @@
                     <td><li>make</li></td>
                     <td>
                         <input class="task-id" type="hidden" value="39">
-                        <button class="display" type="button">display</button>
+                        
+                        <button class="display" type="button" id="display0">display</button>
                     </td>
                     <td>
                         <button class="edit" type="button">edit</button>
@@ -577,7 +627,8 @@
                     <td><li>makes</li></td>
                     <td>
                         <input class="task-id" type="hidden" value="40">
-                        <button class="display" type="button">display</button>
+                        
+                        <button class="display" type="button" id="display0">display</button>
                     </td>
                     <td>
                         <button class="edit" type="button">edit</button>
@@ -591,7 +642,8 @@
                     <td><li>make</li></td>
                     <td>
                         <input class="task-id" type="hidden" value="41">
-                        <button class="display" type="button">display</button>
+                        
+                        <button class="display" type="button" id="display0">display</button>
                     </td>
                     <td>
                         <button class="edit" type="button">edit</button>
@@ -605,7 +657,8 @@
                     <td><li>42</li></td>
                     <td>
                         <input class="task-id" type="hidden" value="42">
-                        <button class="display" type="button">display</button>
+                        
+                        <button class="display" type="button" id="display0">display</button>
                     </td>
                     <td>
                         <button class="edit" type="button">edit</button>
@@ -619,7 +672,8 @@
                     <td><li>make</li></td>
                     <td>
                         <input class="task-id" type="hidden" value="43">
-                        <button class="display" type="button">display</button>
+                        
+                        <button class="display" type="button" id="display0">display</button>
                     </td>
                     <td>
                         <button class="edit" type="button">edit</button>
@@ -633,7 +687,8 @@
                     <td><li></li></td>
                     <td>
                         <input class="task-id" type="hidden" value="44">
-                        <button class="display" type="button">display</button>
+                        
+                        <button class="display" type="button" id="display0">display</button>
                     </td>
                     <td>
                         <button class="edit" type="button">edit</button>
@@ -647,7 +702,8 @@
                     <td><li>maek</li></td>
                     <td>
                         <input class="task-id" type="hidden" value="45">
-                        <button class="display" type="button">display</button>
+                        
+                        <button class="display" type="button" id="display0">display</button>
                     </td>
                     <td>
                         <button class="edit" type="button">edit</button>
@@ -661,7 +717,8 @@
                     <td><li>make</li></td>
                     <td>
                         <input class="task-id" type="hidden" value="46">
-                        <button class="display" type="button">display</button>
+                        
+                        <button class="display" type="button" id="display0">display</button>
                     </td>
                     <td>
                         <button class="edit" type="button">edit</button>
@@ -675,7 +732,8 @@
                     <td><li>47</li></td>
                     <td>
                         <input class="task-id" type="hidden" value="47">
-                        <button class="display" type="button">display</button>
+                        
+                        <button class="display" type="button" id="display0">display</button>
                     </td>
                     <td>
                         <button class="edit" type="button">edit</button>
@@ -689,7 +747,8 @@
                     <td><li>data</li></td>
                     <td>
                         <input class="task-id" type="hidden" value="48">
-                        <button class="display" type="button">display</button>
+                        
+                        <button class="display" type="button" id="display0">display</button>
                     </td>
                     <td>
                         <button class="edit" type="button">edit</button>
@@ -703,7 +762,8 @@
                     <td><li>sad</li></td>
                     <td>
                         <input class="task-id" type="hidden" value="49">
-                        <button class="display" type="button">display</button>
+                        
+                        <button class="display" type="button" id="display0">display</button>
                     </td>
                     <td>
                         <button class="edit" type="button">edit</button>
@@ -717,7 +777,8 @@
                     <td><li>test</li></td>
                     <td>
                         <input class="task-id" type="hidden" value="50">
-                        <button class="display" type="button">display</button>
+                        
+                        <button class="display" type="button" id="display0">display</button>
                     </td>
                     <td>
                         <button class="edit" type="button">edit</button>
@@ -731,7 +792,8 @@
                     <td><li>test2</li></td>
                     <td>
                         <input class="task-id" type="hidden" value="51">
-                        <button class="display" type="button">display</button>
+                        
+                        <button class="display" type="button" id="display0">display</button>
                     </td>
                     <td>
                         <button class="edit" type="button">edit</button>
@@ -745,7 +807,8 @@
                     <td><li>testtest</li></td>
                     <td>
                         <input class="task-id" type="hidden" value="52">
-                        <button class="display" type="button">display</button>
+                        
+                        <button class="display" type="button" id="display0">display</button>
                     </td>
                     <td>
                         <button class="edit" type="button">edit</button>
@@ -759,7 +822,8 @@
                     <td><li>aaaaaaaaaaaaaaaaaaa</li></td>
                     <td>
                         <input class="task-id" type="hidden" value="53">
-                        <button class="display" type="button">display</button>
+                        
+                        <button class="display" type="button" id="display0">display</button>
                     </td>
                     <td>
                         <button class="edit" type="button">edit</button>
@@ -773,7 +837,8 @@
                     <td><li></li></td>
                     <td>
                         <input class="task-id" type="hidden" value="54">
-                        <button class="display" type="button">display</button>
+                        
+                        <button class="display" type="button" id="display0">display</button>
                     </td>
                     <td>
                         <button class="edit" type="button">edit</button>
@@ -787,7 +852,8 @@
                     <td><li>test</li></td>
                     <td>
                         <input class="task-id" type="hidden" value="55">
-                        <button class="display" type="button">display</button>
+                        
+                        <button class="display" type="button" id="display0">display</button>
                     </td>
                     <td>
                         <button class="edit" type="button">edit</button>
@@ -801,7 +867,8 @@
                     <td><li>asfrhgta</li></td>
                     <td>
                         <input class="task-id" type="hidden" value="56">
-                        <button class="display" type="button">display</button>
+                        
+                        <button class="display" type="button" id="display0">display</button>
                     </td>
                     <td>
                         <button class="edit" type="button">edit</button>
@@ -815,7 +882,8 @@
                     <td><li></li></td>
                     <td>
                         <input class="task-id" type="hidden" value="57">
-                        <button class="display" type="button">display</button>
+                        
+                        <button class="display" type="button" id="display0">display</button>
                     </td>
                     <td>
                         <button class="edit" type="button">edit</button>
@@ -829,7 +897,8 @@
                     <td><li>testtttt</li></td>
                     <td>
                         <input class="task-id" type="hidden" value="58">
-                        <button class="display" type="button">display</button>
+                        
+                        <button class="display" type="button" id="display0">display</button>
                     </td>
                     <td>
                         <button class="edit" type="button">edit</button>
@@ -843,7 +912,8 @@
                     <td><li>aaa</li></td>
                     <td>
                         <input class="task-id" type="hidden" value="59">
-                        <button class="display" type="button">display</button>
+                        
+                        <button class="display" type="button" id="display0">display</button>
                     </td>
                     <td>
                         <button class="edit" type="button">edit</button>
@@ -857,7 +927,8 @@
                     <td><li></li></td>
                     <td>
                         <input class="task-id" type="hidden" value="60">
-                        <button class="display" type="button">display</button>
+                        
+                        <button class="display" type="button" id="display0">display</button>
                     </td>
                     <td>
                         <button class="edit" type="button">edit</button>
@@ -873,16 +944,7 @@
   <form>
     <button id="add" type="button">add TODO</button>
   </form>
-  <form method="POST" name="update">
-    temp sql primary id
-    <input id="number" type="number">
-    <button id="editbtn">編集</button>
-  </form>
-
-  <button id="displayTasks" type="button">タスクを背景に表示する</button>
-  <button id="restoreOriginalWallpaper" type="button">元の背景画像に戻す</button>
-
-
+  <button id="openSettings" type="button">設定</button>
   <!-- You can also require other files to run in this process -->
   <script src="../indexRenderer.js"></script>
 </body>
