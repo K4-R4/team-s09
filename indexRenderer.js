@@ -62,3 +62,15 @@ if (document.title === "memo") {
         await window.api.updated(number)
     })
 }
+
+//追加された内容を表示
+window.api.addHTML((_event, value) => {
+    const place = document.getElementById(value["insert_place_id"])
+    console.log("additional")
+    console.log(value)
+    let add_elements = '<tr id=' + value["id"] +'"> \n<td><li>' + value["text"] + '</li></td> \n<td>\n<input class="task-id" type="hidden" value="' + value["id"] + '">\n<button class="display" type="button">display</button>\n</td>\n<td>\n<button class="edit" type="button">edit</button>\n </td>\n<td>\n<button class="delete" type="button">delete</button>\n</td>\n</tr>\n'
+    place.insertAdjacentHTML('afterend',add_elements)
+    //機能が反応するように再読み込み
+    taskIds.push(value["id"])
+    deletes =document.querySelectorAll(".delete")
+})

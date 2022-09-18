@@ -6,6 +6,7 @@ contextBridge.exposeInMainWorld('api', {
   detail: async () => await ipcRenderer.invoke('detail'),
   save: async (data) => await ipcRenderer.invoke('save', data),
   toggleDisplay: async (taskId) => await ipcRenderer.invoke('toggleDisplay', taskId), 
+  addHTML: (additional) => ipcRenderer.on('addHTML',additional),
   /*TODO
   edit function*/
   updated: async (number) => await ipcRenderer.invoke("update", number),

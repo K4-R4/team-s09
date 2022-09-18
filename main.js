@@ -8,8 +8,10 @@ const ejs = require('ejs')
 const fs = require('fs')
 const jimp = require('jimp')
 const wallpaper = require('wallpaper')
-
+const { maxHeaderSize } = require('http')
 const db = new sqlite3.Database("./todo.db")
+var mainWindowid = null
+
 
 // Create html file from ejs template
 // 引数dataToPassはテンプレートに渡す値を{key: value, key1: value1}のような連想配列で記述
@@ -41,9 +43,10 @@ function createWindow() {
     height: 600,
     webPreferences: {
       preload: path.join(__dirname, 'preload.js')
+      
     }
   })
-
+  mainWindowid = mainWindow.id
   db.all("SELECT id, text, display FROM data", function(err, allTasks) {
     if (err) {
       throw err
@@ -115,11 +118,31 @@ ipcMain.handle('save', (event, data) => {
   if (data.length === 0) {
     return dialog.showErrorBox("", "入力がありません")
   }
+
   db.run("INSERT INTO data (text, display, UpdatedAt) values(?, ?, ?)", data, false, Date.now())
   // Close window after saving data
   const currentWindow = BrowserWindow.getFocusedWindow()
   currentWindow.close()
-  return
+
+  //indexrendererに送信
+  db.get("SELECT MAX(id) FROM data WHERE text=?",data,(err, row)=> {
+      if (err)throw err
+      let added_task_data = {}
+      added_task_data["id"] = row['MAX(id)']
+      added_task_data["text"] = data      
+      added_task_data["insert_place_id"]=null
+      db.each("SELECT id FROM data ORDER BY id DESC LIMIT 2",(err, row)=>{
+          if (err)throw err
+          console.log(row["id"], added_task_data["id"])
+          if (row["id"] != added_task_data["id"]) {
+            added_task_data["insert_place_id"] = row["id"]
+            const mainWindow = BrowserWindow.fromId(mainWindowid)
+            mainWindow.webContents.send('addHTML', added_task_data)
+            return
+          }
+
+        })
+    })
 })
 
 
@@ -161,7 +184,8 @@ ipcMain.handle("updatedbtn", (event, stextarea) => {
 /*TODO
 delete function*/
 ipcMain.handle("deleted",(event,task_id)=>{
-  db.run("delete from data where id = ?",task_id)
+  console.log("deltaskid: "+task_id)
+  db.run("DELETE FROM data WHERE id = ?",task_id)
 })
 
 ipcMain.handle('displayTasks', () => {
@@ -195,6 +219,9 @@ ipcMain.handle('displayTasks', () => {
         console.log(path.join(__dirname, './originalWallpaper.jpg'))
         if (originalWallpaperPath != path.join(__dirname, './modifiedWallpaper.jpg')) {
           fs.copyFileSync(originalWallpaperPath, './originalWallpaper.jpg')
+          .catch( (fileErr) => {
+            if (fileErr) throw (fileErr)
+            })
           console.log("saved original wallpaper")
         }
       })
