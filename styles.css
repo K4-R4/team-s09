@@ -54,7 +54,7 @@ button.display{
 }
 
 button#display0{/*display offのときの色*/
-    color:rgba(11, 15, 245, 0.281)
+    color:rgba(11, 15, 245, 0.281);
 }
 
 button.edit{
@@ -97,4 +97,11 @@ li {
     font-weight: bold;
     margin-right:20px;
     margin-left:10px;
+}
+
+button#display0.offon {
+    color: #404040; 
+}
+button#display1.onoff {
+    color:rgba(11, 15, 245, 0.281);
 }
