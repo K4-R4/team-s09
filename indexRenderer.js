@@ -30,6 +30,14 @@ for (let i = 0, len = displays.length; i < len; i++) {
     })
 }
 
+/*displaybuttonの色を変える*/
+let buttonOff = document.getElementById("display0").onclick = function () {
+    this.classList.toggle('offon');
+};
+let buttonOn = document.getElementById("display1").onclick = function () {
+    this.classList.toggle('onoff');
+};
+
 /*TODO
 edit function*/
 var edits = document.querySelectorAll('.edit')

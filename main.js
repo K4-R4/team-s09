@@ -221,7 +221,7 @@ ipcMain.handle('displayTasks', () => {
 
     const originalWallpaperPath = await wallpaper.get()
     if (originalWallpaperPath != path.join(__dirname, './modifiedWallpaper.jpg')) {
-      fs.copyFileSync(originalWallpaperPath, app.getPath('userData') + '\\originalWallpaper.jpg')
+      fs.copyFileSync(originalWallpaperPath, path.join(__dirname, './originalWallpaper.jpg'))
       // console.log("saved original wallpaper")
     }
     
@@ -232,6 +232,6 @@ ipcMain.handle('displayTasks', () => {
 })
 
 ipcMain.handle('restoreOriginalWallpaper', async () => {
-  await wallpaper.set(app.getPath('userData') + '\\originalWallpaper.jpg')
+  await wallpaper.set(path.join(__dirname, './originalWallpaper.jpg'))
   return
 })
