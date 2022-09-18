@@ -37,27 +37,12 @@ function createHtml(dataToPass, templateFile, outputFile) {
 
 function createWindow(windowOptions, fileToLoad) {
   // Create the browser window.
-/*<<<<<<< HEAD
-  const mainWindow = new BrowserWindow({
-    width: 600,
-    height: 600,
-    webPreferences: {
-      preload: path.join(__dirname, 'preload.js')
-      
-    }
-  })
-  
-  db.all("SELECT id, text, display FROM data", function(err, allTasks) {
-    if (err) {
-      throw err
-    }
-    createHtml({allTasks: allTasks}, './src/index.ejs', './dist/index.html')
-  })
 
-=======*/
   const window = new BrowserWindow(windowOptions)
-  mainWindowid = window.id
-//>>>>>>> 03e0bcfa520d337e3f13405dd48e713ffee64c71
+  if (fileToLoad === './dist/index.html'){
+    mainWindowid = window.id
+  }
+
   // and load the index.html of the app.
   window.loadFile(fileToLoad)
 }

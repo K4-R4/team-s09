@@ -23,11 +23,8 @@ for (let i = 0, len = tasks.length; i < len; i++) {
     })
     i番目の行(項目)のdisplayボタンがクリックされた際に、
     その行に対応するデータベースのidを渡します*/
-var displays = document.querySelectorAll('.display')
-for (let i = 0, len = displays.length; i < len; i++) {
-    displays[i].addEventListener('click', () => {
-        window.api.toggleDisplay(taskIds[i])
-    })
+    function displaybtn(taskid){
+        window.api.toggleDisplay(taskid)
 }
 
 /*displaybuttonの色を変える*/
@@ -40,28 +37,23 @@ let buttonOn = document.getElementById("display1").onclick = function () {
 
 /*TODO
 edit function*/
-var edits = document.querySelectorAll('.edit')
-for (let i = 0, len = edits.length; i < len; i++) {
-    edits[i].addEventListener('click', () => {
-        window.api.edit(taskIds[i])
-    })
+function editbtn(taskid){
+    window.api.edit(taskid)
 }
 
 
 /*TODO
 delete function*/ 
 
-let deletes =document.querySelectorAll(".delete")
-for (let i = 0, len = deletes.length; i < len; i++) {
-    deletes[i].addEventListener('click',async () => {
-        if (taskIds[i] === null){
-            console.log("task_id=null")
-        }else{
-            await window.api.deleted(taskIds[i])  
-            document.getElementById(taskIds[i]).remove()
-        }
-    });
-};
+async function deletebtn(taskid){
+    if (taskid === null){
+        console.log("task_id=null")
+    }else{
+        await window.api.deleted(taskid)  
+        document.getElementById(taskid).remove()
+    }
+    }
+        
 
 document.getElementById('openSettings').addEventListener('click', () => {
     window.api.openSettings()
@@ -80,10 +72,22 @@ window.api.addHTML((_event, value) => {
     const place = document.getElementById(value["insert_place_id"])
     console.log("additional")
     console.log(value)
-    let add_elements = '<tr id=' + value["id"] +'"> \n<td><li>' + value["text"] + '</li></td> \n<td>\n<input class="task-id" type="hidden" value="' + value["id"] + '">\n<button class="display" type="button">display</button>\n</td>\n<td>\n<button class="edit" type="button">edit</button>\n </td>\n<td>\n<button class="delete" type="button">delete</button>\n</td>\n</tr>\n'
+    let add_elements = '<tr id=' + value["id"] +'"> \n<td><li>' + value["text"] + '</li></td> \n<td>\n<input class="task-id" type="hidden" value="' + value["id"] + '">\n<button class="display" type="button" id="display0">display</button>\n</td>\n<td>\n<button class="edit" type="button">edit</button>\n </td>\n<td>\n<button class="delete" type="button">delete</button>\n</td>\n</tr>\n'
     place.insertAdjacentHTML('afterend',add_elements)
-    //機能が反応するように再読み込み
-    taskIds.push(value["id"])
-    deletes =document.querySelectorAll(".delete")
-
 })
+
+//listのボタンの機能をまとめたもの。動的なHTMLの挿入でもボタンが機能
+document.addEventListener('click',function(e){
+    if(e.target ){
+        const taskid = e.target.parentElement.parentElement.id
+        
+            console.log(taskid , e.target.getAttribute('class'))
+        if(e.target.getAttribute('class')==='display'){
+          displaybtn(taskid)
+        }else if(e.target.getAttribute('class') === 'edit'){
+            editbtn(taskid)
+        }else if(e.target.getAttribute('class') === 'delete'){
+            deletebtn(taskid)
+        }
+    }
+ })
