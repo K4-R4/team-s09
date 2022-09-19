@@ -13,6 +13,8 @@ const store = new Store()
 const db = new sqlite3.Database("./todo.db")
 var mainWindowid = null
 
+let mainWindow
+
 
 var settings = {}
 
@@ -20,6 +22,14 @@ function loadSettings() {
   settings = {
     taskPosition: store.get('taskPosition') || [0, 0]
 }
+}
+
+function updateMainWindow() {
+  db.all("SELECT id, text, display FROM data", function(err, allTasks) {
+    if (err) throw err
+    createHtml({allTasks: allTasks}, './src/index.ejs', './dist/index.html')
+    mainWindow.loadFile('./dist/index.html')
+  })
 }
 
 // Create html file from ejs template
@@ -45,6 +55,7 @@ function createWindow(windowOptions, fileToLoad) {
 
   // and load the index.html of the app.
   window.loadFile(fileToLoad)
+  return window
 }
 
 // This method will be called when Electron has finished
@@ -55,7 +66,7 @@ app.whenReady().then(() => {
   db.all("SELECT id, text, display FROM data", function(err, allTasks) {
     if (err) throw err
     createHtml({allTasks: allTasks}, './src/index.ejs', './dist/index.html')
-    createWindow({
+    mainWindow = createWindow({
       width: 600,
       height: 600,
       webPreferences: {
@@ -160,6 +171,7 @@ ipcMain.handle('saveChange', (event, task_id, data) => {
   db.run("UPDATE data SET text = ? WHERE id = ?", data, task_id)
   const currentWindow = BrowserWindow.getFocusedWindow()
   currentWindow.close()
+  updateMainWindow()
 })
 
 /*TODO
