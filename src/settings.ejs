@@ -5,12 +5,13 @@
     <!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'">
     <link href="../styles.css" rel="stylesheet">
-    <title>detail</title>
+    <title>memo</title>
 </head>
 <body>
-    <h1>settings</h1>
-    左から　<input id="task-position-x" type="number" placeholder="タスクのx座標" value="<%= settings['taskPosition'][0] %>"><br>
-    上から　<input id="task-position-y" type="number" placeholder="タスクのy座標" value="<%= settings['taskPosition'][1] %>"><br>
+    <h1>設定</h1>
+    画面の左端から<input id="task-position-x" type="number" size="4" value="<%= settings['taskPosition'][0] %>">px <br>
+    画面の上端から<input id="task-position-y" type="number" size="4" value="<%= settings['taskPosition'][1] %>">px <br>
+    <button id="backToMainWindow" type="button">キャンセル</button>
     <button id="saveSettings" type="button">保存</button>
     <!-- You can also require other files to run in this process -->
     <script src="../settingsRenderer.js"></script>

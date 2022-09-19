@@ -3,3 +3,7 @@ document.getElementById('saveSettings').addEventListener('click', async () => {
     let task_position_y = document.getElementById('task-position-y').value
     window.api.saveSettings([task_position_x, task_position_y])
 })
+
+document.getElementById('backToMainWindow').addEventListener('click', async () => {
+    window.api.backToMainWindow()
+})

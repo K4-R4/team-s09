@@ -162,20 +162,17 @@ ipcMain.handle("deleted",(event,task_id)=>{
 
 ipcMain.handle('openSettings', () => {
   createHtml({settings: settings}, './src/settings.ejs', './dist/settings.html')
-  createWindow({
-    width: 400,
-    height: 300,
-    webPreferences: {
-      preload: path.join(__dirname, 'preload.js')
-    }
-  }, './dist/settings.html')
+  mainWindow.loadFile('./dist/settings.html')
+})
+
+ipcMain.handle('backToMainWindow', () => {
+  updateMainWindow()
 })
 
 ipcMain.handle('saveSettings', (event, taskPosition) => {
   store.set('taskPosition', taskPosition)
   loadSettings()
-  const currentWindow = BrowserWindow.getFocusedWindow()
-  currentWindow.close()
+  updateMainWindow()
 })
 
 ipcMain.handle('displayTasks', () => {
