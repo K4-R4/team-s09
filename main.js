@@ -6,19 +6,18 @@ const ejs = require('ejs')
 const fs = require('fs')
 const jimp = require('jimp')
 const wallpaper = require('wallpaper')
-
 const Store = require('electron-store')
 const store = new Store()
 
 const db = new sqlite3.Database("./todo.db")
 
-
-
 var settings = {}
 
 function loadSettings() {
   settings = {
-    taskPosition: store.get('taskPosition') || [0, 0]
+    taskPosition: store.get('taskPosition') || [0, 0],
+    taskFont: store.get('taskFont') || 32,
+    lineSpacing: store.get('lineSpacing') || 0
 }
 }
 
@@ -49,7 +48,6 @@ function createWindow(windowOptions, fileToLoad) {
   const window = new BrowserWindow(windowOptions)
   if (fileToLoad === './dist/index.html'){
   }
-
   // and load the index.html of the app.
   window.loadFile(fileToLoad)
   return window
@@ -169,26 +167,43 @@ ipcMain.handle('backToMainWindow', () => {
   updateMainWindow()
 })
 
-ipcMain.handle('saveSettings', (event, taskPosition) => {
+ipcMain.handle('saveSettings', (event, taskPosition, fontSize, lineSpacing) => {
   store.set('taskPosition', taskPosition)
+  store.set('taskFont', fontSize)
+  store.set('lineSpacing', lineSpacing)
   loadSettings()
   updateMainWindow()
 })
 
 ipcMain.handle('displayTasks', () => {
   db.all("SELECT text FROM data WHERE display = true", async function (dbErr, rows) {
-    let x = Number(settings['taskPosition'][0])
-    let y = Number(settings['taskPosition'][1])
     if (dbErr) throw dbErr
 
+    let x = Number(settings['taskPosition'][0])
+    let y = Number(settings['taskPosition'][1])
+    let lineSpacing = Number(settings['lineSpacing'])
     // フォントを読み込む
-    const font = await jimp.loadFont(jimp.FONT_SANS_32_BLACK)
+    let font
+    switch (settings['taskFont']) {
+      case "16":
+        font = await jimp.loadFont(jimp.FONT_SANS_16_BLACK)
+        break
+      case "32":
+        font = await jimp.loadFont(jimp.FONT_SANS_32_BLACK)
+        break
+      case "64":
+        font = await jimp.loadFont(jimp.FONT_SANS_64_BLACK)
+        break
+      case "128":
+        font = await jimp.loadFont(jimp.FONT_SANS_128_BLACK)
+        break
+    }
 
     // タスクを書き込む背景画像を読み込み、タスクを書き込む
     const image = await jimp.read('baseWallpaper.jpg')
     for (let i = 0, len = rows.length; i < len; i++) {
       image.print(font, x, y, rows[i]["text"])
-      y = y + 32 + 16
+      y = y + Number(settings['taskFont']) + lineSpacing
     }
     image.write('modifiedWallpaper.jpg')
 
