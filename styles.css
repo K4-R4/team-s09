@@ -58,7 +58,7 @@ button.display{
     border: solid 1px #1374e279;
 }
 
-button#display0{/*display offのときの色*/
+button.display0{/*display offのときの色*/
     color:rgba(11, 15, 245, 0.281);
 }
 
@@ -104,9 +104,9 @@ li {
     margin-left:10px;
 }
 
-button#display0.offon {
+button.offon {
     color: #404040; 
 }
-button#display1.onoff {
+button.onoff {
     color:rgba(11, 15, 245, 0.281);
 }
