@@ -11,9 +11,7 @@ const Store = require('electron-store')
 const store = new Store()
 
 const db = new sqlite3.Database("./todo.db")
-var mainWindowid = null
 
-let mainWindow
 
 
 var settings = {}
@@ -50,7 +48,6 @@ function createWindow(windowOptions, fileToLoad) {
 
   const window = new BrowserWindow(windowOptions)
   if (fileToLoad === './dist/index.html'){
-    mainWindowid = window.id
   }
 
   // and load the index.html of the app.
@@ -113,27 +110,9 @@ ipcMain.handle('save', (event, data) => {
   db.run("INSERT INTO data (text, display, UpdatedAt) values(?, ?, ?)", data, false, Date.now())
   // Close window after saving data
   const currentWindow = BrowserWindow.getFocusedWindow()
+  updateMainWindow()
   currentWindow.close()
 
-  //indexrendererに送信
-  db.get("SELECT MAX(id) FROM data WHERE text=?",data,(err, row)=> {
-      if (err)throw err
-      let added_task_data = {}
-      added_task_data["id"] = row['MAX(id)']
-      added_task_data["text"] = data      
-      added_task_data["insert_place_id"]=null
-      db.each("SELECT id FROM data ORDER BY id DESC LIMIT 2",(err, row)=>{
-          if (err)throw err
-          console.log(row["id"], added_task_data["id"])
-          if (row["id"] != added_task_data["id"]) {
-            added_task_data["insert_place_id"] = row["id"]
-            const mainWindow = BrowserWindow.fromId(mainWindowid)
-            mainWindow.webContents.send('addHTML', added_task_data)
-            return
-          }
-
-        })
-    })
 })
 
 
@@ -229,6 +208,5 @@ ipcMain.handle('displayTasks', () => {
 })
 
 ipcMain.handle('restoreOriginalWallpaper', async () => {
-  await wallpaper.set(path.join(__dirname, './originalWallpaper.jpg'))
-  return
+  await wallpaper.set(path.join(__dirname, './originalWallpaper.jpg'));
 })
