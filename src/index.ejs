@@ -13,15 +13,15 @@
 <body>
   <div class="Header">
     背景
-    <button id="displayTasks" type="button">タスクを背景に表示する</button>
-    <button id="restoreOriginalWallpaper" type="button">元の背景画像に戻す</button>
+    <button id="displayTasks" type="radio">タスクを背景に表示する</button>
+    <button id="restoreOriginalWallpaper" type="radio">元の背景画像に戻す</button>
     <button id="openSettings" type="button">設定</button>
   </div>
   <div class="Contents">
     <h1>TODO LIST</h1>
     <div class='add'>
       <form>
-        <button id="add" type="button">add TODO</button>
+        <button id="add" type="button">TODO 追加</button>
       </form>
     </div>
     <table>
@@ -40,13 +40,15 @@
                     <td>
                         <input class="task-id" type="hidden" value="<%= task.id %>">
                         
-                        <button class="display display<%= task.display %>" type="button" >display</button>
+
+                        <button class="display display<%= task.display %>" type="button" >表示</button>
+
                     </td>
                     <td>
-                        <button class="edit" type="button">edit</button>
+                        <button class="edit" type="button">編集</button>
                     </td>
                     <td>
-                        <button class="delete" type="button">delete</button>
+                        <button class="delete" type="button">削除</button>
                     </td>
                 </tr>
             <% }) %>
