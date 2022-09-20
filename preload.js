@@ -17,6 +17,8 @@ contextBridge.exposeInMainWorld('api', {
   displayTasks: async () => await ipcRenderer.invoke('displayTasks'),
   restoreOriginalWallpaper: async () => await ipcRenderer.invoke('restoreOriginalWallpaper'),
   openSettings: async () => await ipcRenderer.invoke('openSettings'),
+  saveBaseWallpaper: async () => ipcRenderer.invoke('saveBaseWallpaper'),
   saveSettings: async (taskPosition, fontSize, lineSpacing) => await ipcRenderer.invoke('saveSettings', taskPosition, fontSize, lineSpacing),
-  backToMainWindow: async () => await ipcRenderer.invoke('backToMainWindow')
+  backToMainWindow: async () => await ipcRenderer.invoke('backToMainWindow'),
+  on: (channel, callback) => ipcRenderer.on(channel, (event, argv) => callback(event, argv))
 })

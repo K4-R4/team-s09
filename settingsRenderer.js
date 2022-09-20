@@ -6,6 +6,14 @@ document.getElementById('saveSettings').addEventListener('click', async () => {
     window.api.saveSettings([task_position_x, task_position_y], fontSize, lineSpacing)
 })
 
+document.getElementById('saveBaseWallpaper').addEventListener('click', () => {
+    window.api.saveBaseWallpaper()
+})
+
+window.api.on('selectedWallpaperPath', (event, selectedWallpaperPath) => {
+    document.getElementById('selectedWallpaperPath').innerHTML = selectedWallpaperPath
+})
+
 document.getElementById('backToMainWindow').addEventListener('click', async () => {
     window.api.backToMainWindow()
 })

@@ -14,11 +14,13 @@ const db = new sqlite3.Database("./todo.db")
 var settings = {}
 
 function loadSettings() {
-  settings = {
-    taskPosition: store.get('taskPosition') || [0, 0],
-    taskFont: store.get('taskFont') || 32,
-    lineSpacing: store.get('lineSpacing') || 0
-}
+  settings["taskPosition"] = store.get('taskPosition') || [0, 0]
+  settings["taskFont"] = store.get('taskFont') || 32
+  settings["lineSpacing"] = store.get('lineSpacing') || 0
+  jimp.read(path.join(__dirname, './baseWallpaper.jpg'))
+  .then((image) => {
+    settings['baseWallpaperSize'] = [image.bitmap.width, image.bitmap.height]
+  })
 }
 
 function updateMainWindow() {
@@ -163,6 +165,16 @@ ipcMain.handle('openSettings', () => {
   mainWindow.loadFile('./dist/settings.html')
 })
 
+let selectedBaseWallpaper
+
+ipcMain.handle('saveBaseWallpaper', async () => {
+  selectedBaseWallpaper = await dialog.showOpenDialog({
+    properties: ['openFile'],
+    filters: [{name: '画像ファイル', extensions: ['jpg', 'png', 'gif']}]
+  })
+  await mainWindow.webContents.send('selectedWallpaperPath', [selectedBaseWallpaper['filePaths'][0]])
+})
+
 ipcMain.handle('backToMainWindow', () => {
   updateMainWindow()
 })
@@ -171,6 +183,9 @@ ipcMain.handle('saveSettings', (event, taskPosition, fontSize, lineSpacing) => {
   store.set('taskPosition', taskPosition)
   store.set('taskFont', fontSize)
   store.set('lineSpacing', lineSpacing)
+  if (!(selectedBaseWallpaper == "undefined" || selectedBaseWallpaper == null)) {
+    fs.copyFileSync(selectedBaseWallpaper['filePaths'][0], path.join(__dirname, './baseWallpaper.jpg'))
+  }
   loadSettings()
   updateMainWindow()
 })
@@ -179,8 +194,8 @@ ipcMain.handle('displayTasks', () => {
   db.all("SELECT text FROM data WHERE display = true", async function (dbErr, rows) {
     if (dbErr) throw dbErr
 
-    let x = Number(settings['taskPosition'][0])
-    let y = Number(settings['taskPosition'][1])
+    let x = Number(settings['baseWallpaperSize'][0] * settings['taskPosition'][0] / 100)
+    let y = Number(settings['baseWallpaperSize'][1] * settings['taskPosition'][1] / 100)
     let lineSpacing = Number(settings['lineSpacing'])
     // フォントを読み込む
     let font
@@ -200,7 +215,7 @@ ipcMain.handle('displayTasks', () => {
     }
 
     // タスクを書き込む背景画像を読み込み、タスクを書き込む
-    const image = await jimp.read('baseWallpaper.jpg')
+    const image = await jimp.read(path.join(__dirname, './baseWallpaper.jpg'))
     for (let i = 0, len = rows.length; i < len; i++) {
       image.print(font, x, y, rows[i]["text"])
       y = y + Number(settings['taskFont']) + lineSpacing
