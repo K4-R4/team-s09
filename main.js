@@ -4,7 +4,6 @@ const path = require('path')
 const sqlite3 = require('sqlite3')
 const ejs = require('ejs')
 const fs = require('fs')
-const jimp = require('jimp')
 const wallpaper = require('wallpaper')
 const Store = require('electron-store')
 const sharp = require('sharp');
@@ -15,14 +14,14 @@ const db = new sqlite3.Database("./todo.db")
 
 var settings = {}
 
-function loadSettings() {
+async function loadSettings() {
   settings["taskPosition"] = store.get('taskPosition') || [0, 0]
   settings["taskFont"] = store.get('taskFont') || 32
   settings["lineSpacing"] = store.get('lineSpacing') || 0
-  jimp.read(path.join(__dirname, './baseWallpaper.jpg'))
-  .then((image) => {
-    settings['baseWallpaperSize'] = [image.bitmap.width, image.bitmap.height]
-  })
+
+  const image = await sharp('./baseWallpaper.jpg')
+  const metadata = await image.metadata()
+  settings['baseWallpaperSize'] = [metadata['width'], metadata['height']]
 }
 
 function updateMainWindow() {
@@ -236,7 +235,6 @@ ipcMain.handle('displayTasks', () => {
       }
       //項目ごとに改行する
       totalHeight += fontSize + lineSpacing
-      console.log(totalHeight)
     })
 
     const sharpOptions = svgBuffer.map(rowData => ({
