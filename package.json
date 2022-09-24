@@ -2,7 +2,7 @@
   "name": "todo-app",
   "version": "1.0.0",
   "description": "todo application",
-  "main": "./js/main.js",
+  "main": "./src/js/main.js",
   "scripts": {
     "start": "electron ."
   },

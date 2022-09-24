@@ -94,7 +94,7 @@ ipcMain.handle('detail', () => {
     webPreferences: {
       preload: path.join(__dirname, 'preload.js')
     }
-  }, './detail.html')
+  }, './src/detail.html')
   return
 })
 
@@ -196,8 +196,10 @@ ipcMain.handle('saveSettings', (event, taskPosition, fontSize, lineSpacing) => {
   store.set('taskPosition', taskPosition)
   store.set('taskFont', fontSize)
   store.set('lineSpacing', lineSpacing)
+
+  console.log(__dirname);
   if (!(selectedBaseWallpaper == "undefined" || selectedBaseWallpaper == null)) {
-    fs.copyFileSync(selectedBaseWallpaper['filePaths'][0], path.join(__dirname, './baseWallpaper.jpg'))
+    fs.copyFileSync(selectedBaseWallpaper['filePaths'][0], path.join(__dirname, './images/baseWallpaper.jpg'))
   }
   if (!(selectedFontFile == "undefined" || selectedFontFile == null)) {
     fs.copyFileSync(selectedFontFile['filePaths'][0], path.join(__dirname, './defaultFont.ttf'))
@@ -212,7 +214,7 @@ ipcMain.handle('displayTasks', async () => {
 
     if (dbErr) throw dbErr
 
-    const image = await sharp('./baseWallpaper.jpg')
+    const image = await sharp('./src/images/baseWallpaper.jpg')//
     const metadata = await image.metadata()
 
     let x = Number(metadata['width'] * settings['taskPosition'][0] / 100)
@@ -265,20 +267,20 @@ ipcMain.handle('displayTasks', async () => {
         left: x
     }))
 
-    sharp('./baseWallpaper.jpg')
+    sharp('./src/images/baseWallpaper.jpg')
         .composite(sharpOptions)
         .toFile('./modifiedWallpaper.jpg')
 
     const originalWallpaperPath = await wallpaper.get()
-    if (originalWallpaperPath != path.join(__dirname, '../modifiedWallpaper.jpg')) {
-      fs.copyFileSync(originalWallpaperPath, path.join(__dirname, '../originalWallpaper.jpg'))
-    }
     
+    if (originalWallpaperPath != path.join(__dirname, '../images/modifiedWallpaper.jpg')) {
+      fs.copyFileSync(originalWallpaperPath, path.join(__dirname, '../images/originalWallpaper.jpg'))
+    }
     await wallpaper.set('modifiedWallpaper.jpg')
 
   })
 })
 
 ipcMain.handle('restoreOriginalWallpaper', async () => {
-  await wallpaper.set(path.join(__dirname, '../originalWallpaper.jpg'));
+  await wallpaper.set(path.join(__dirname, '../images/originalWallpaper.jpg'));
 })
