@@ -37,6 +37,11 @@
             <% allTasks.forEach((task) => { %>
                 <tr id="<%= task.id %>">
                     <td><li><%= task.text %></li></td>
+                    <% if(task.IsUseDeadline != 0){%>
+                      <td><li><%= task.deadline %></li></td>
+                    <% }else{ %>
+                      <td><li></li></td>
+                    <% } %>
                     <td>
                         <button class="display display<%= task.display %>" type="button" >表示</button>
 

@@ -24,7 +24,7 @@ function loadSettings() {
 }
 
 function updateMainWindow() {
-  db.all("SELECT id, text, display FROM data", function(err, allTasks) {
+  db.all("SELECT id, text, display ,deadline, IsUseDeadline FROM tasks", function(err, allTasks) {
     if (err) throw err
     createHtml({allTasks: allTasks}, './src/index.ejs', './dist/index.html')
     mainWindow.loadFile('./dist/index.html')
@@ -60,7 +60,7 @@ function createWindow(windowOptions, fileToLoad) {
 // Some APIs can only be used after this event occurs.
 app.whenReady().then(() => {
   loadSettings()
-  db.all("SELECT id, text, display FROM data", function(err, allTasks) {
+  db.all("SELECT id, text, display, deadline, IsUseDeadline FROM tasks", function(err, allTasks) {
     if (err) throw err
     createHtml({allTasks: allTasks}, './src/index.ejs', './dist/index.html')
     mainWindow = createWindow({
@@ -102,12 +102,13 @@ ipcMain.handle('detail', () => {
 })
 
 // Save data to the database
-ipcMain.handle('save', (event, data) => {
+ipcMain.handle('save', (event, data,deadline) => {
   if (data.length === 0) {
     return dialog.showErrorBox("", "入力がありません")
   }
-
-  db.run("INSERT INTO data (text, display, UpdatedAt) values(?, ?, ?)", data, false, Date.now())
+  deadline = deadline != null? deadline:Date.now()
+  const IsUseDeadline = deadline != null? 1:0
+  db.run("INSERT INTO tasks (text, display, UpdatedAt, deadline, IsUseDeadline) values(?, ?, ?, ?, ?)", data, false, Date.now(), deadline, IsUseDeadline)
   // Close window after saving data
   const currentWindow = BrowserWindow.getFocusedWindow()
   updateMainWindow()
@@ -119,12 +120,12 @@ ipcMain.handle('save', (event, data) => {
 /*TODO
 toddle disply function*/
 ipcMain.handle('toggleDisplay', (event, taskId) => {
-  db.get("SELECT display FROM data WHERE id = ?", taskId, (err, row) => {
+  db.get("SELECT display FROM tasks WHERE id = ?", taskId, (err, row) => {
     if (err) throw err
     let displayOrNot = row['display']
     displayOrNot = displayOrNot === 0 ? 1:0
     console.log(taskId + " toggle disply " + (displayOrNot === 1 ? "on" : "off"))
-    db.run("UPDATE data SET display = ? WHERE id = ?", displayOrNot, taskId)
+    db.run("UPDATE tasks SET display = ? WHERE id = ?", displayOrNot, taskId)
   })
   return
 })
@@ -133,8 +134,11 @@ ipcMain.handle('toggleDisplay', (event, taskId) => {
 /*TODO
 edit function*/
 ipcMain.handle('edit', (event, task_id) => {
-  db.get("SELECT id, text FROM data WHERE id = ?", task_id, (err, task) => {
+  db.get("SELECT id, text ,deadline, IsUseDeadline FROM tasks WHERE id = ?", task_id, (err, task) => {
     if (err) throw err
+    if (task.IsUseDeadline === 0){
+      task.deadline = null
+    }
     createHtml({task: task}, './src/edit.ejs', './dist/edit.html')
     createWindow({
       width: 400,
@@ -146,8 +150,10 @@ ipcMain.handle('edit', (event, task_id) => {
   })
 })
 
-ipcMain.handle('saveChange', (event, task_id, data) => {
-  db.run("UPDATE data SET text = ? WHERE id = ?", data, task_id)
+ipcMain.handle('saveChange', (event, task_id, data, deadline) => {
+  deadline = deadline != null? deadline:Date.now()
+  const IsUseDeadline = deadline != null? 1:0
+  db.run("UPDATE tasks SET text = ? ,deadline = ?, IsUseDeadline = ? WHERE id = ?", data, deadline, IsUseDeadline,task_id)
   const currentWindow = BrowserWindow.getFocusedWindow()
   currentWindow.close()
   updateMainWindow()
@@ -157,7 +163,7 @@ ipcMain.handle('saveChange', (event, task_id, data) => {
 delete function*/
 ipcMain.handle("deleted",(event,task_id)=>{
   console.log("deltaskid: "+task_id)
-  db.run("DELETE FROM data WHERE id = ?",task_id)
+  db.run("DELETE FROM tasks WHERE id = ?",task_id)
 })
 
 ipcMain.handle('openSettings', () => {
@@ -191,7 +197,7 @@ ipcMain.handle('saveSettings', (event, taskPosition, fontSize, lineSpacing) => {
 })
 
 ipcMain.handle('displayTasks', () => {
-  db.all("SELECT text FROM data WHERE display = true", async function (dbErr, rows) {
+  db.all("SELECT text, deadline, IsUseDeadline FROM tasks WHERE display = true", async function (dbErr, rows) {
     if (dbErr) throw dbErr
 
     let x = Number(settings['baseWallpaperSize'][0] * settings['taskPosition'][0] / 100)
@@ -217,7 +223,8 @@ ipcMain.handle('displayTasks', () => {
     // タスクを書き込む背景画像を読み込み、タスクを書き込む
     const image = await jimp.read(path.join(__dirname, './baseWallpaper.jpg'))
     for (let i = 0, len = rows.length; i < len; i++) {
-      image.print(font, x, y, rows[i]["text"])
+      let output = rows[i]['IsUseDeadline'] === 0? rows[i]['text']:rows[i]['text'] + " " + rows[i]['deadline']
+      image.print(font, x, y, output)
       y = y + Number(settings['taskFont']) + lineSpacing
     }
     image.write('modifiedWallpaper.jpg')

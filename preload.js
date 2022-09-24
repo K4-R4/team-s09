@@ -4,17 +4,20 @@ const { contextBridge, ipcRenderer } = require('electron')
 
 contextBridge.exposeInMainWorld('api', {
   detail: async () => await ipcRenderer.invoke('detail'),
-  save: async (data) => await ipcRenderer.invoke('save', data),
+  save: async (data, deadline) => await ipcRenderer.invoke('save', data, deadline),
   toggleDisplay: async (taskId) => await ipcRenderer.invoke('toggleDisplay', taskId), 
-  addHTML: (additional) => ipcRenderer.on('addHTML',additional),
   /*TODO
   edit function*/
   edit: async (task_id) => ipcRenderer.invoke('edit', task_id),
-  saveChange: async(task_id, data) => await ipcRenderer.invoke('saveChange', task_id, data),
+  saveChange: async(task_id, data, deadline) => await ipcRenderer.invoke('saveChange', task_id, data, deadline),
   /*TODO
   delete function*/
   deleted: async (task_id) => await ipcRenderer.invoke("deleted", task_id),
+  /*TODO
+  display function*/
   displayTasks: async () => await ipcRenderer.invoke('displayTasks'),
+  /*TODO
+  settings function*/
   restoreOriginalWallpaper: async () => await ipcRenderer.invoke('restoreOriginalWallpaper'),
   openSettings: async () => await ipcRenderer.invoke('openSettings'),
   saveBaseWallpaper: async () => ipcRenderer.invoke('saveBaseWallpaper'),
