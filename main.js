@@ -176,6 +176,16 @@ ipcMain.handle('saveBaseWallpaper', async () => {
   await mainWindow.webContents.send('selectedWallpaperPath', [selectedBaseWallpaper['filePaths'][0]])
 })
 
+let selectedFontFile
+
+ipcMain.handle('saveFontFile', async () => {
+  selectedFontFile = await dialog.showOpenDialog({
+    properties: ['openFile'],
+    filters: [{name: 'フォントファイル', extensions: ['ttf']}]
+  })
+  await mainWindow.webContents.send('selectedFontFilePath', [selectedFontFile['filePaths'][0]])
+})
+
 ipcMain.handle('backToMainWindow', () => {
   updateMainWindow()
 })
@@ -186,6 +196,9 @@ ipcMain.handle('saveSettings', (event, taskPosition, fontSize, lineSpacing) => {
   store.set('lineSpacing', lineSpacing)
   if (!(selectedBaseWallpaper == "undefined" || selectedBaseWallpaper == null)) {
     fs.copyFileSync(selectedBaseWallpaper['filePaths'][0], path.join(__dirname, './baseWallpaper.jpg'))
+  }
+  if (!(selectedFontFile == "undefined" || selectedFontFile == null)) {
+    fs.copyFileSync(selectedFontFile['filePaths'][0], path.join(__dirname, './selectedFont.ttf'))
   }
   loadSettings()
   updateMainWindow()
@@ -202,8 +215,15 @@ ipcMain.handle('displayTasks', () => {
 
     const MAXWIDTH = 100000
 
-    //http://modi.jpn.org/font_komorebi-gothic.php
-    const fontFile = "./komorebi-gothic.ttf";
+    let fontFile
+    fs.stat(path.join(__dirname, 'selectedFont.ttf'), (err, stat) => {
+      if (err) {
+        //http://modi.jpn.org/font_komorebi-gothic.php
+        fontFile = './komorebi-gothic.ttf'
+      } else {
+        fontFile = 'selectedFont.ttf'
+      }
+    })
     const textToSVG = text_to_svg.loadSync(fontFile)
     const svgOptions = {x: 0, y: 0, fontSize: fontSize, anchor: "left top", attributes: {fill: "black"}};
     let totalHeight = 0

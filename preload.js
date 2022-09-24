@@ -18,6 +18,7 @@ contextBridge.exposeInMainWorld('api', {
   restoreOriginalWallpaper: async () => await ipcRenderer.invoke('restoreOriginalWallpaper'),
   openSettings: async () => await ipcRenderer.invoke('openSettings'),
   saveBaseWallpaper: async () => ipcRenderer.invoke('saveBaseWallpaper'),
+  saveFontFile: async () => ipcRenderer.invoke('saveFontFile'),
   saveSettings: async (taskPosition, fontSize, lineSpacing) => await ipcRenderer.invoke('saveSettings', taskPosition, fontSize, lineSpacing),
   backToMainWindow: async () => await ipcRenderer.invoke('backToMainWindow'),
   on: (channel, callback) => ipcRenderer.on(channel, (event, argv) => callback(event, argv))

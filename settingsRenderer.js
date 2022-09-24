@@ -10,8 +10,16 @@ document.getElementById('saveBaseWallpaper').addEventListener('click', () => {
     window.api.saveBaseWallpaper()
 })
 
+document.getElementById('saveFontFile').addEventListener('click', () => {
+    window.api.saveFontFile()
+})
+
 window.api.on('selectedWallpaperPath', (event, selectedWallpaperPath) => {
     document.getElementById('selectedWallpaperPath').innerHTML = selectedWallpaperPath
+})
+
+window.api.on('selectedFontFilePath', (event, selectedFontFilePath) => {
+    document.getElementById('selectedFontFilePath').innerHTML = selectedFontFilePath
 })
 
 document.getElementById('backToMainWindow').addEventListener('click', async () => {
