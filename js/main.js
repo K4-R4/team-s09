@@ -61,7 +61,7 @@ app.whenReady().then(() => {
     if (err) throw err
     createHtml({allTasks: allTasks}, './src/index.ejs', './dist/index.html')
     mainWindow = createWindow({
-      width: 600,
+      width: 700,
       height: 600,
       webPreferences: {
         preload: path.join(__dirname, 'preload.js')
