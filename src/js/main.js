@@ -94,7 +94,7 @@ ipcMain.handle('detail', () => {
     webPreferences: {
       preload: path.join(__dirname, 'preload.js')
     }
-  }, './src/detail.html')
+  }, './src/html/detail.html')
   return
 })
 
@@ -197,12 +197,11 @@ ipcMain.handle('saveSettings', (event, taskPosition, fontSize, lineSpacing) => {
   store.set('taskFont', fontSize)
   store.set('lineSpacing', lineSpacing)
 
-  console.log(__dirname);
   if (!(selectedBaseWallpaper == "undefined" || selectedBaseWallpaper == null)) {
-    fs.copyFileSync(selectedBaseWallpaper['filePaths'][0], path.join(__dirname, './images/baseWallpaper.jpg'))
+    fs.copyFileSync(selectedBaseWallpaper['filePaths'][0], path.join(__dirname, '../images/baseWallpaper.jpg'))
   }
   if (!(selectedFontFile == "undefined" || selectedFontFile == null)) {
-    fs.copyFileSync(selectedFontFile['filePaths'][0], path.join(__dirname, './defaultFont.ttf'))
+    fs.copyFileSync(selectedFontFile['filePaths'][0], path.join(__dirname, '../fonts/defaultFont.ttf'))
   }
   loadSettings()
   updateMainWindow()
@@ -225,7 +224,7 @@ ipcMain.handle('displayTasks', async () => {
     const MAXWIDTH = 100000
 
     //http://modi.jpn.org/font_komorebi-gothic.php
-    const fontFile = './defaultFont.ttf'
+    const fontFile = './src/fonts/defaultFont.ttf'
     const textToSVG = text_to_svg.loadSync(fontFile)
     const svgOptions = {x: 0, y: 0, fontSize: fontSize, anchor: "left top", attributes: {fill: "black"}};
     let totalHeight = 0
@@ -269,14 +268,14 @@ ipcMain.handle('displayTasks', async () => {
 
     sharp('./src/images/baseWallpaper.jpg')
         .composite(sharpOptions)
-        .toFile('./modifiedWallpaper.jpg')
+        .toFile('./src/images/modifiedWallpaper.jpg')
 
     const originalWallpaperPath = await wallpaper.get()
     
     if (originalWallpaperPath != path.join(__dirname, '../images/modifiedWallpaper.jpg')) {
       fs.copyFileSync(originalWallpaperPath, path.join(__dirname, '../images/originalWallpaper.jpg'))
     }
-    await wallpaper.set('modifiedWallpaper.jpg')
+    await wallpaper.set('./src/images/modifiedWallpaper.jpg')
 
   })
 })
