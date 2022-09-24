@@ -12,6 +12,9 @@
         <p>
             <textarea id="data" rows="10" cols="40"><%= task.text %></textarea>
         </p>
+         <p>
+            <input type="date" id="deadline" value="<%= task.deadline %>">
+        </p>
         <p>
             <button id="save" type="button" value="<%= task.id %>">保存</button>
         </p>
