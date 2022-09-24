@@ -18,10 +18,6 @@ async function loadSettings() {
   settings["taskPosition"] = store.get('taskPosition') || [0, 0]
   settings["taskFont"] = store.get('taskFont') || 32
   settings["lineSpacing"] = store.get('lineSpacing') || 0
-
-  const image = await sharp('./baseWallpaper.jpg')
-  const metadata = await image.metadata()
-  settings['baseWallpaperSize'] = [metadata['width'], metadata['height']]
 }
 
 function updateMainWindow() {
@@ -204,34 +200,30 @@ ipcMain.handle('saveSettings', (event, taskPosition, fontSize, lineSpacing) => {
     fs.copyFileSync(selectedBaseWallpaper['filePaths'][0], path.join(__dirname, './baseWallpaper.jpg'))
   }
   if (!(selectedFontFile == "undefined" || selectedFontFile == null)) {
-    fs.copyFileSync(selectedFontFile['filePaths'][0], path.join(__dirname, './selectedFont.ttf'))
+    fs.copyFileSync(selectedFontFile['filePaths'][0], path.join(__dirname, './defaultFont.ttf'))
   }
   loadSettings()
   updateMainWindow()
 })
 
-ipcMain.handle('displayTasks', () => {
+ipcMain.handle('displayTasks', async () => {
 
   db.all("SELECT text, deadline, IsUseDeadline FROM tasks WHERE display = true", async function (dbErr, tasks) {
 
     if (dbErr) throw dbErr
 
-    let x = Number(settings['baseWallpaperSize'][0] * settings['taskPosition'][0] / 100)
-    let y = Number(settings['baseWallpaperSize'][1] * settings['taskPosition'][1] / 100)
+    const image = await sharp('./baseWallpaper.jpg')
+    const metadata = await image.metadata()
+
+    let x = Number(metadata['width'] * settings['taskPosition'][0] / 100)
+    let y = Number(metadata['height'] * settings['taskPosition'][1] / 100)
     let lineSpacing = Number(settings['lineSpacing'])
     let fontSize = Number(settings['taskFont'])
 
     const MAXWIDTH = 100000
 
-    let fontFile
-    fs.stat(path.join(__dirname, 'selectedFont.ttf'), (err, stat) => {
-      if (err) {
-        //http://modi.jpn.org/font_komorebi-gothic.php
-        fontFile = './komorebi-gothic.ttf'
-      } else {
-        fontFile = 'selectedFont.ttf'
-      }
-    })
+    //http://modi.jpn.org/font_komorebi-gothic.php
+    const fontFile = './defaultFont.ttf'
     const textToSVG = text_to_svg.loadSync(fontFile)
     const svgOptions = {x: 0, y: 0, fontSize: fontSize, anchor: "left top", attributes: {fill: "black"}};
     let totalHeight = 0
