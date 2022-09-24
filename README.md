@@ -1,9 +1,23 @@
 # team-s09
-create文
 
+# project name
+Non sticky めも
+
+# over view
+これはデスクトップの壁紙にメモを表示するアプリです。
+
+# features
+
+
+# 使用技術
+言語 (javascript, html, css)
+フレームワーク (electron)
+ライブラリ (ejs, electron-store, electron, jimp, sqlite3, wallpaper)
+インフラ環境 (ユーザーがダウンロードします)
+
+# 使い方
+git clone
+npm start
+
+# create文
  CREATE TABLE tasks(id INTEGER PRIMARY KEY,text TEXT NOT NULL,display BOOLEAN NOT NULL, UpdatedAt TIMESTAMP NOT NULL, deadline TIMESTAMP NOT NULL, IsUseDeadline BOOLEAN NOT NULL DEFAULT false);
-
-アプリの説明：この
- 技術：
- 使い方：git clone
-        npm start
