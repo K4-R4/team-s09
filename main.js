@@ -4,23 +4,24 @@ const path = require('path')
 const sqlite3 = require('sqlite3')
 const ejs = require('ejs')
 const fs = require('fs')
-const jimp = require('jimp')
 const wallpaper = require('wallpaper')
 const Store = require('electron-store')
+const sharp = require('sharp');
+const text_to_svg = require('text-to-svg')
 const store = new Store()
 
 const db = new sqlite3.Database("./todo.db")
 
 var settings = {}
 
-function loadSettings() {
+async function loadSettings() {
   settings["taskPosition"] = store.get('taskPosition') || [0, 0]
   settings["taskFont"] = store.get('taskFont') || 32
   settings["lineSpacing"] = store.get('lineSpacing') || 0
-  jimp.read(path.join(__dirname, './baseWallpaper.jpg'))
-  .then((image) => {
-    settings['baseWallpaperSize'] = [image.bitmap.width, image.bitmap.height]
-  })
+
+  const image = await sharp('./baseWallpaper.jpg')
+  const metadata = await image.metadata()
+  settings['baseWallpaperSize'] = [metadata['width'], metadata['height']]
 }
 
 function updateMainWindow() {
@@ -197,48 +198,73 @@ ipcMain.handle('saveSettings', (event, taskPosition, fontSize, lineSpacing) => {
 })
 
 ipcMain.handle('displayTasks', () => {
-  db.all("SELECT text, deadline, IsUseDeadline FROM tasks WHERE display = true", async function (dbErr, rows) {
+
+  db.all("SELECT text, deadline, IsUseDeadline FROM tasks WHERE display = true", async function (dbErr, tasks) {
+
     if (dbErr) throw dbErr
 
     let x = Number(settings['baseWallpaperSize'][0] * settings['taskPosition'][0] / 100)
     let y = Number(settings['baseWallpaperSize'][1] * settings['taskPosition'][1] / 100)
     let lineSpacing = Number(settings['lineSpacing'])
-    // フォントを読み込む
-    let font
-    switch (settings['taskFont']) {
-      case "16":
-        font = await jimp.loadFont(jimp.FONT_SANS_16_BLACK)
-        break
-      case "32":
-        font = await jimp.loadFont(jimp.FONT_SANS_32_BLACK)
-        break
-      case "64":
-        font = await jimp.loadFont(jimp.FONT_SANS_64_BLACK)
-        break
-      case "128":
-        font = await jimp.loadFont(jimp.FONT_SANS_128_BLACK)
-        break
-    }
+    let fontSize = Number(settings['taskFont'])
 
-    // タスクを書き込む背景画像を読み込み、タスクを書き込む
-    const image = await jimp.read(path.join(__dirname, './baseWallpaper.jpg'))
-    for (let i = 0, len = rows.length; i < len; i++) {
-      let output = rows[i]['IsUseDeadline'] === 0? rows[i]['text']:rows[i]['text'] + " " + rows[i]['deadline']
-      image.print(font, x, y, output)
-      y = y + Number(settings['taskFont']) + lineSpacing
-    }
-    image.write('modifiedWallpaper.jpg')
+    const MAXWIDTH = 100000
+
+    //http://modi.jpn.org/font_komorebi-gothic.php
+    const fontFile = "./komorebi-gothic.ttf";
+    const textToSVG = text_to_svg.loadSync(fontFile)
+    const svgOptions = {x: 0, y: 0, fontSize: fontSize, anchor: "left top", attributes: {fill: "black"}};
+    let totalHeight = 0
+
+    let svgBuffer = []
+
+    tasks.forEach(task => {
+      let row = ""
+      task['text'] = task['IsUseDeadline'] != 0? task['text']+" "+task['deadline']:task['text']
+      let textInArray = Array.from(task['text'])
+      //文字列が規定の幅を超えるなら改行する
+      //一行の文字列をsvgデータの配列としてsvgBufferに保存する
+      textInArray.forEach(char => {
+          //行に新たに文字を加えた場合のwidth, heightを取得する
+          const newRow = row + char
+          const {width, height} = textToSVG.getMetrics(newRow, svgOptions)
+          //widthが規定の幅を超えるならrowをsvgデータとして保存する
+          //規定の幅を超えないならrowに文字を追加(newRow)してループする
+          if (width > MAXWIDTH) {
+              svgBuffer.push({svg: textToSVG.getSVG(row, svgOptions), top: totalHeight})
+              row = char
+              totalHeight += height + lineSpacing
+          } else {
+              row = newRow
+          }
+      })
+      //最後の改行を終えて残る保存されていない文字列をsvgデータとして保存する
+      if (row.length > 0) {
+          svgBuffer.push({svg: textToSVG.getSVG(row, svgOptions), top: totalHeight})
+      }
+      //項目ごとに改行する
+      totalHeight += fontSize + lineSpacing
+    })
+
+
+    const sharpOptions = svgBuffer.map(rowData => ({
+        input: Buffer.from(rowData.svg),
+        top: Math.floor(y + rowData.top),
+        left: x
+    }))
+
+    sharp('./baseWallpaper.jpg')
+        .composite(sharpOptions)
+        .toFile('./modifiedWallpaper.jpg')
 
     const originalWallpaperPath = await wallpaper.get()
     if (originalWallpaperPath != path.join(__dirname, './modifiedWallpaper.jpg')) {
       fs.copyFileSync(originalWallpaperPath, path.join(__dirname, './originalWallpaper.jpg'))
-      // console.log("saved original wallpaper")
     }
     
     await wallpaper.set('modifiedWallpaper.jpg')
 
   })
-  return
 })
 
 ipcMain.handle('restoreOriginalWallpaper', async () => {
