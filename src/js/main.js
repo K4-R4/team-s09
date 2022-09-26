@@ -165,8 +165,8 @@ app.on('window-all-closed', function () {
 // Open detail window
 ipcMain.handle('detail', () => {
   createWindow({
-    width: 400,
-    height: 300,
+    width: 340,
+    height: 320,
     webPreferences: {
       preload: path.join(__dirname, 'preload.js')
     }
@@ -215,7 +215,7 @@ ipcMain.handle('edit', (event, task_id) => {
     createHtml({task: task}, './src/edit.ejs', './dist/edit.html')
     createWindow({
       width: 400,
-      height: 300,
+      height: 350,
       webPreferences: {
         preload: path.join(__dirname, 'preload.js')
       }
