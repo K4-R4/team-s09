@@ -28,6 +28,82 @@ function updateMainWindow() {
   })
 }
 
+async function changeWallpaper() {
+  //オリジナルの壁紙を保存し、タスクを書き込んだ壁紙に差し替える
+  const originalWallpaperPath = await wallpaper.get()
+    
+  if (originalWallpaperPath != path.join(__dirname, '../images/modifiedWallpaper.jpg')) {
+    fs.copyFileSync(originalWallpaperPath, path.join(__dirname, '../images/originalWallpaper.jpg'))
+  }
+  await wallpaper.set('./src/images/modifiedWallpaper.jpg')
+}
+
+async function printTasksOnBaseWallpaper(params, callback) {
+  db.all("SELECT text, deadline, IsUseDeadline FROM tasks WHERE display = true", async function (dbErr, tasks) {
+
+    if (dbErr) throw dbErr
+
+    const image = await sharp('./src/images/baseWallpaper.jpg')//
+    const metadata = await image.metadata()
+
+    let x = Number(metadata['width'] * params['taskPosition'][0] / 100)
+    let y = Number(metadata['height'] * params['taskPosition'][1] / 100)
+    let lineSpacing = Number(params['lineSpacing'])
+    let fontSize = Number(params['taskFont'])
+
+    const MAXWIDTH = 100000
+
+    //http://modi.jpn.org/font_komorebi-gothic.php
+    const fontFile = './src/fonts/defaultFont.ttf'
+    const textToSVG = text_to_svg.loadSync(fontFile)
+    const svgOptions = {x: 0, y: 0, fontSize: fontSize, anchor: "left top", attributes: {fill: "black"}};
+    let totalHeight = 0
+
+    let svgBuffer = []
+
+    tasks.forEach(task => {
+      let row = ""
+      task['text'] = task['IsUseDeadline'] != 0? task['text']+" "+task['deadline']:task['text']
+      let textInArray = Array.from(task['text'])
+      //文字列が規定の幅を超えるなら改行する
+      //一行の文字列をsvgデータの配列としてsvgBufferに保存する
+      textInArray.forEach(char => {
+          //行に新たに文字を加えた場合のwidth, heightを取得する
+          const newRow = row + char
+          const {width, height} = textToSVG.getMetrics(newRow, svgOptions)
+          //widthが規定の幅を超えるならrowをsvgデータとして保存する
+          //規定の幅を超えないならrowに文字を追加(newRow)してループする
+          if (width > MAXWIDTH) {
+              svgBuffer.push({svg: textToSVG.getSVG(row, svgOptions), top: totalHeight})
+              row = char
+              totalHeight += height + lineSpacing
+          } else {
+              row = newRow
+          }
+      })
+      //最後の改行を終えて残る保存されていない文字列をsvgデータとして保存する
+      if (row.length > 0) {
+          svgBuffer.push({svg: textToSVG.getSVG(row, svgOptions), top: totalHeight})
+      }
+      //項目ごとに改行する
+      totalHeight += fontSize + lineSpacing
+    })
+
+
+    const sharpOptions = svgBuffer.map(rowData => ({
+        input: Buffer.from(rowData.svg),
+        top: Math.floor(y + rowData.top),
+        left: x
+    }))
+
+    sharp('./src/images/baseWallpaper.jpg')
+        .composite(sharpOptions)
+        .toFile('./src/images/modifiedWallpaper.jpg')
+
+    await callback()
+  })
+}
+
 // Create html file from ejs template
 // 引数dataToPassはテンプレートに渡す値を{key: value, key1: value1}のような連想配列で記述
 // templateFile, outputFileはそれぞれテンプレートのパスと作成されるhtmlファイルのパス
@@ -208,76 +284,12 @@ ipcMain.handle('saveSettings', (event, taskPosition, fontSize, lineSpacing) => {
 })
 
 ipcMain.handle('displayTasks', async () => {
-
-  db.all("SELECT text, deadline, IsUseDeadline FROM tasks WHERE display = true", async function (dbErr, tasks) {
-
-    if (dbErr) throw dbErr
-
-    const image = await sharp('./src/images/baseWallpaper.jpg')//
-    const metadata = await image.metadata()
-
-    let x = Number(metadata['width'] * settings['taskPosition'][0] / 100)
-    let y = Number(metadata['height'] * settings['taskPosition'][1] / 100)
-    let lineSpacing = Number(settings['lineSpacing'])
-    let fontSize = Number(settings['taskFont'])
-
-    const MAXWIDTH = 100000
-
-    //http://modi.jpn.org/font_komorebi-gothic.php
-    const fontFile = './src/fonts/defaultFont.ttf'
-    const textToSVG = text_to_svg.loadSync(fontFile)
-    const svgOptions = {x: 0, y: 0, fontSize: fontSize, anchor: "left top", attributes: {fill: "black"}};
-    let totalHeight = 0
-
-    let svgBuffer = []
-
-    tasks.forEach(task => {
-      let row = ""
-      task['text'] = task['IsUseDeadline'] != 0? task['text']+" "+task['deadline']:task['text']
-      let textInArray = Array.from(task['text'])
-      //文字列が規定の幅を超えるなら改行する
-      //一行の文字列をsvgデータの配列としてsvgBufferに保存する
-      textInArray.forEach(char => {
-          //行に新たに文字を加えた場合のwidth, heightを取得する
-          const newRow = row + char
-          const {width, height} = textToSVG.getMetrics(newRow, svgOptions)
-          //widthが規定の幅を超えるならrowをsvgデータとして保存する
-          //規定の幅を超えないならrowに文字を追加(newRow)してループする
-          if (width > MAXWIDTH) {
-              svgBuffer.push({svg: textToSVG.getSVG(row, svgOptions), top: totalHeight})
-              row = char
-              totalHeight += height + lineSpacing
-          } else {
-              row = newRow
-          }
-      })
-      //最後の改行を終えて残る保存されていない文字列をsvgデータとして保存する
-      if (row.length > 0) {
-          svgBuffer.push({svg: textToSVG.getSVG(row, svgOptions), top: totalHeight})
-      }
-      //項目ごとに改行する
-      totalHeight += fontSize + lineSpacing
-    })
-
-
-    const sharpOptions = svgBuffer.map(rowData => ({
-        input: Buffer.from(rowData.svg),
-        top: Math.floor(y + rowData.top),
-        left: x
-    }))
-
-    sharp('./src/images/baseWallpaper.jpg')
-        .composite(sharpOptions)
-        .toFile('./src/images/modifiedWallpaper.jpg')
-
-    const originalWallpaperPath = await wallpaper.get()
-    
-    if (originalWallpaperPath != path.join(__dirname, '../images/modifiedWallpaper.jpg')) {
-      fs.copyFileSync(originalWallpaperPath, path.join(__dirname, '../images/originalWallpaper.jpg'))
-    }
-    await wallpaper.set('./src/images/modifiedWallpaper.jpg')
-
-  })
+  const params = {
+    taskPosition: settings['taskPosition'],
+    lineSpacing: settings['lineSpacing'],
+    taskFont: settings['taskFont']
+  }
+  await printTasksOnBaseWallpaper(params, changeWallpaper)
 })
 
 ipcMain.handle('restoreOriginalWallpaper', async () => {
