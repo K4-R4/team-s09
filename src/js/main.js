@@ -13,6 +13,13 @@ const store = new Store()
 
 const db = new sqlite3.Database("./todo.db")
 
+const ORIGINAL_WALLPAPER_PATH = path.join(__dirname, '../images/originalWallpaper.jpg')
+const BASE_WALLAPAER_PATH = path.join(__dirname, '../images/baseWallpaper.jpg')
+const MODIFIED_WALLPAPER_PATH = path.join(__dirname, '../images/modifiedWallpaper.jpg')
+const PREVIEW_BASE_WALLPAPER_PATH = path.join(__dirname, '../images/previewBaseWallpaper.jpg')
+const DEFAULT_FONT_PATH = path.join(__dirname, '../fonts/defaultFont.ttf')
+const PREVIEW_FONT_PATH = path.join(__dirname, '../fonts/previewFontFile.ttf')
+
 var settings = {}
 
 async function loadSettings() {
@@ -33,10 +40,10 @@ async function changeWallpaper() {
   //オリジナルの壁紙を保存し、タスクを書き込んだ壁紙に差し替える
   const originalWallpaperPath = await wallpaper.get()
     
-  if (originalWallpaperPath != path.join(__dirname, '../images/modifiedWallpaper.jpg')) {
-    fs.copyFileSync(originalWallpaperPath, path.join(__dirname, '../images/originalWallpaper.jpg'))
+  if (originalWallpaperPath != MODIFIED_WALLPAPER_PATH) {
+    fs.copyFileSync(originalWallpaperPath, ORIGINAL_WALLPAPER_PATH)
   }
-  await wallpaper.set('./src/images/modifiedWallpaper.jpg')
+  await wallpaper.set(MODIFIED_WALLPAPER_PATH)
 }
 
 async function printTasksOnBaseWallpaper(params, baseWallpaperPath, fontFilePath, outputFile, callback) {
@@ -248,9 +255,9 @@ ipcMain.handle("deleted",(event,task_id)=>{
 })
 
 ipcMain.handle('openSettings', () => {
-  fs.copyFileSync(path.join(__dirname, '../images/baseWallpaper.jpg'), path.join(__dirname, '../images/previewBaseWallpaper.jpg'))
-  fs.copyFileSync(path.join(__dirname, '../fonts/defaultFont.ttf'), path.join(__dirname, '../fonts/previewFontFile.ttf'))
-  printTasksOnBaseWallpaper(settings, path.join(__dirname, '../images/previewBaseWallpaper.jpg'), path.join(__dirname, '../fonts/previewFontFile.ttf'), './src/images/output.jpg', sendWebContents)
+  fs.copyFileSync(BASE_WALLAPAER_PATH, PREVIEW_BASE_WALLPAPER_PATH)
+  fs.copyFileSync(DEFAULT_FONT_PATH, PREVIEW_FONT_PATH)
+  printTasksOnBaseWallpaper(settings, PREVIEW_BASE_WALLPAPER_PATH, PREVIEW_FONT_PATH, './src/images/output.jpg', sendWebContents)
   createHtml({settings: settings}, './src/settings.ejs', './dist/settings.html')
   mainWindow.loadFile('./dist/settings.html')
 })
@@ -263,7 +270,7 @@ ipcMain.handle('saveBaseWallpaper', async () => {
     filters: [{name: '画像ファイル', extensions: ['jpg', 'png', 'gif']}]
   })
   if (selectedBaseWallpaper['canceled'] == false) {
-    fs.copyFileSync(selectedBaseWallpaper['filePaths'][0], path.join(__dirname, '../images/previewBaseWallpaper.jpg'))
+    fs.copyFileSync(selectedBaseWallpaper['filePaths'][0], PREVIEW_BASE_WALLPAPER_PATH)
   }
   await mainWindow.webContents.send('selectedWallpaperPath', [selectedBaseWallpaper['filePaths'][0]])
 })
@@ -276,7 +283,7 @@ ipcMain.handle('saveFontFile', async () => {
     filters: [{name: 'フォントファイル', extensions: ['ttf']}]
   })
   if (selectedFontFile['canceled'] == false) {
-    fs.copyFileSync(selectedFontFile['filePaths'][0], path.join(__dirname, '../fonts/previewFontFile.ttf'))
+    fs.copyFileSync(selectedFontFile['filePaths'][0], PREVIEW_FONT_PATH)
   }
   await mainWindow.webContents.send('selectedFontFilePath', [selectedFontFile['filePaths'][0]])
 })
@@ -291,7 +298,7 @@ ipcMain.handle('preview', (event, taskPosition, fontSize, lineSpacing) => {
     taskFont: fontSize,
     lineSpacing: lineSpacing
   }
-  printTasksOnBaseWallpaper(previewSettings, path.join(__dirname, '../images/previewBaseWallpaper.jpg'), path.join(__dirname, '../fonts/previewFontFile.ttf'), './src/images/output.jpg', sendWebContents)
+  printTasksOnBaseWallpaper(previewSettings, PREVIEW_BASE_WALLPAPER_PATH, PREVIEW_FONT_PATH, './src/images/output.jpg', sendWebContents)
 })
 
 ipcMain.handle('saveSettings', (event, taskPosition, fontSize, lineSpacing) => {
@@ -300,20 +307,20 @@ ipcMain.handle('saveSettings', (event, taskPosition, fontSize, lineSpacing) => {
   store.set('lineSpacing', lineSpacing)
 
   if (!(selectedBaseWallpaper == "undefined" || selectedBaseWallpaper == null)) {
-    fs.copyFileSync(selectedBaseWallpaper['filePaths'][0], path.join(__dirname, '../images/baseWallpaper.jpg'))
+    fs.copyFileSync(selectedBaseWallpaper['filePaths'][0], BASE_WALLAPAER_PATH)
   }
   if (!(selectedFontFile == "undefined" || selectedFontFile == null)) {
-    fs.copyFileSync(selectedFontFile['filePaths'][0], path.join(__dirname, '../fonts/defaultFont.ttf'))
+    fs.copyFileSync(selectedFontFile['filePaths'][0], DEFAULT_FONT_PATH)
   }
   loadSettings()
   updateIndexHtml()
-  printTasksOnBaseWallpaper(settings, path.join(__dirname, '../images/baseWallpaper.jpg'), path.join(__dirname, '../fonts/defaultFont.ttf'), './src/images/modifiedWallpaper.jpg', changeWallpaper)
+  printTasksOnBaseWallpaper(settings, BASE_WALLAPAER_PATH, DEFAULT_FONT_PATH, MODIFIED_WALLPAPER_PATH, changeWallpaper)
 })
 
 ipcMain.handle('displayTasks', async () => {
-  await printTasksOnBaseWallpaper(settings, path.join(__dirname, '../images/baseWallpaper.jpg'), path.join(__dirname, '../fonts/defaultFont.ttf'), './src/images/modifiedWallpaper.jpg', changeWallpaper)
+  await printTasksOnBaseWallpaper(settings, BASE_WALLAPAER_PATH, DEFAULT_FONT_PATH, MODIFIED_WALLPAPER_PATH, changeWallpaper)
 })
 
 ipcMain.handle('restoreOriginalWallpaper', async () => {
-  await wallpaper.set(path.join(__dirname, '../images/originalWallpaper.jpg'));
+  await wallpaper.set(ORIGINAL_WALLPAPER_PATH);
 })
