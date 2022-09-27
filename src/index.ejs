@@ -26,7 +26,15 @@
     </div>
     <table>
         <thead>
+          <select id="sort">
+            <option value="id" <% if (sortsetting == 'id' ){ %> selected <% } %>>並び順を変更</option>
+            <option value="UpdatedAt" <% if (sortsetting ==  'UpdatedAt') { %> selected <% } %>>更新</option>
+            <option value="deadline" <% if (sortsetting ==  'deadline') { %> selected <% } %>>期限</option>
+          </select>
+          <th></th>
+          <th></th>
             <tr>
+              
                 <th>TODO</th>
                 <th width="100">〆切</th>
                 <th width="70"></th>

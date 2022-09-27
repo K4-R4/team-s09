@@ -29,11 +29,26 @@ async function loadSettings() {
 }
 
 function updateIndexHtml() {
-  db.all("SELECT id, text, display ,deadline, IsUseDeadline FROM tasks", function(err, allTasks) {
-    if (err) throw err
-    createHtml({allTasks: allTasks}, './src/index.ejs', './dist/index.html')
-    mainWindow.loadFile('./dist/index.html')
-  })
+  var sortsetting = store.get('sortsetting') || 'id'
+  if (sortsetting === 'deadline'){
+    db.all("SELECT id, text, display ,deadline, IsUseDeadline FROM tasks WHERE IsUseDeadline = true ORDER BY deadline",(err,IsUseDeadlineTrues)=>{
+      if (err) throw err
+      db.all("SELECT id, text, display ,deadline, IsUseDeadline FROM tasks WHERE IsUseDeadline = false",(err,IsUseDeadlineFalses) =>{
+        if (err) throw err
+        let allTasks = IsUseDeadlineTrues.concat(IsUseDeadlineFalses)
+        createHtml({allTasks: allTasks, sortsetting:sortsetting}, './src/index.ejs', './dist/index.html')
+        mainWindow.loadFile('./dist/index.html')
+      })
+    })
+  }
+  else
+  {
+    db.all("SELECT id, text, display ,deadline, IsUseDeadline FROM tasks ORDER BY ?", sortsetting, function(err, allTasks) {
+      if (err) throw err
+      createHtml({allTasks: allTasks, sortsetting: sortsetting}, './src/index.ejs', './dist/index.html')
+      mainWindow.loadFile('./dist/index.html')
+    })
+  }
 }
 
 async function changeWallpaper() {
@@ -137,8 +152,7 @@ function createWindow(windowOptions, fileToLoad) {
   // Create the browser window.
 
   const window = new BrowserWindow(windowOptions)
-  if (fileToLoad === './dist/index.html'){
-  }
+
   // and load the index.html of the app.
   window.loadFile(fileToLoad)
   return window
@@ -149,18 +163,36 @@ function createWindow(windowOptions, fileToLoad) {
 // Some APIs can only be used after this event occurs.
 app.whenReady().then(() => {
   loadSettings()
-  db.all("SELECT id, text, display, deadline, IsUseDeadline FROM tasks", function(err, allTasks) {
-    if (err) throw err
-    createHtml({allTasks: allTasks}, './src/index.ejs', './dist/index.html')
-    mainWindow = createWindow({
-      autoHideMenuBar: true,
-      width: 700,
-      height: 600,
-      webPreferences: {
-        preload: path.join(__dirname, 'preload.js')
-      }
-    }, './dist/index.html')
-  })
+  var sortsetting = store.get('sortsetting') || 'id'
+  if (sortsetting === 'deadline'){
+    db.all("SELECT id, text, display ,deadline, IsUseDeadline FROM tasks WHERE IsUseDeadline = true ORDER BY deadline",(err,IsUseDeadlineTrues)=>{
+      if (err) throw err
+      db.all("SELECT id, text, display ,deadline, IsUseDeadline FROM tasks WHERE IsUseDeadline = false",(err,IsUseDeadlineFalses) =>{
+        if (err) throw err
+        let allTasks = IsUseDeadlineTrues.concat(IsUseDeadlineFalses)
+        createHtml({allTasks: allTasks, sortsetting: sortsetting}, './src/index.ejs', './dist/index.html')
+        mainWindow = createWindow({
+          width: 700,
+          height: 600,
+          webPreferences: {
+            preload: path.join(__dirname, 'preload.js')
+         }
+        }, './dist/index.html')
+      })
+    })
+  }else{
+    db.all("SELECT id, text, display, deadline, IsUseDeadline FROM tasks", function(err, allTasks) {
+      if (err) throw err
+      createHtml({allTasks: allTasks, sortsetting: sortsetting}, './src/index.ejs', './dist/index.html')
+      mainWindow = createWindow({
+        width: 700,
+        height: 600,
+        webPreferences: {
+          preload: path.join(__dirname, 'preload.js')
+        }
+      }, './dist/index.html')
+    })
+  }
 
   app.on('activate', function () {
     // On macOS it's common to re-create a window in the app when the
@@ -326,4 +358,11 @@ ipcMain.handle('displayTasks', async () => {
 
 ipcMain.handle('restoreOriginalWallpaper', async () => {
   await wallpaper.set(ORIGINAL_WALLPAPER_PATH);
+})
+
+ipcMain.handle('sortHTML',(event, sortname) => {
+  if (['id', 'UpdatedAt', 'deadline'].includes (sortname)) {
+    store.set('sortsetting',sortname)
+    updateIndexHtml()
+  }
 })

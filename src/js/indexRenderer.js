@@ -74,3 +74,10 @@ document.getElementById('restoreOriginalWallpaper').addEventListener('click', as
     await window.api.restoreOriginalWallpaper()
 })
 
+//sort
+const sortelement = document.getElementById('sort')
+sortelement.addEventListener('change', async () => {
+    const sortname = sortelement.value
+    console.log(sortname)
+    await window.api.sortHTML(sortname)
+})

@@ -25,5 +25,8 @@ contextBridge.exposeInMainWorld('api', {
   preview: async (taskPosition, fontSize, lineSpacing) => await ipcRenderer.invoke('preview', taskPosition, fontSize, lineSpacing),
   saveSettings: async (taskPosition, fontSize, lineSpacing) => await ipcRenderer.invoke('saveSettings', taskPosition, fontSize, lineSpacing),
   backToMainWindow: async () => await ipcRenderer.invoke('backToMainWindow'),
+  /*TODO
+  sort function*/
+  sortHTML: async (sortname) => await ipcRenderer.invoke('sortHTML', sortname),
   on: (channel, callback) => ipcRenderer.on(channel, (event, argv) => callback(event, argv))
 })
