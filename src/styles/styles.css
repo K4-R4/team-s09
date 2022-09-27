@@ -111,3 +111,14 @@ button.offon {
 button.onoff {
     color:rgba(11, 15, 245, 0.281);
 }
+
+.previewDiv {
+    text-align: center;
+}
+
+#previewWallpaper {
+    width: 480px;
+    height: auto;
+    padding: 5px;
+    border: 5px solid #aaa;
+}

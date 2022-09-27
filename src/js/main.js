@@ -20,7 +20,7 @@ async function loadSettings() {
   settings["lineSpacing"] = store.get('lineSpacing') || 0
 }
 
-function updateMainWindow() {
+function updateIndexHtml() {
   db.all("SELECT id, text, display ,deadline, IsUseDeadline FROM tasks", function(err, allTasks) {
     if (err) throw err
     createHtml({allTasks: allTasks}, './src/index.ejs', './dist/index.html')
@@ -38,12 +38,12 @@ async function changeWallpaper() {
   await wallpaper.set('./src/images/modifiedWallpaper.jpg')
 }
 
-async function printTasksOnBaseWallpaper(params, callback) {
+async function printTasksOnBaseWallpaper(params, baseWallpaperPath, fontFilePath, outputFile, callback) {
   db.all("SELECT text, deadline, IsUseDeadline FROM tasks WHERE display = true", async function (dbErr, tasks) {
 
     if (dbErr) throw dbErr
 
-    const image = await sharp('./src/images/baseWallpaper.jpg')//
+    const image = await sharp(baseWallpaperPath)//
     const metadata = await image.metadata()
 
     let x = Number(metadata['width'] * params['taskPosition'][0] / 100)
@@ -54,7 +54,7 @@ async function printTasksOnBaseWallpaper(params, callback) {
     const MAXWIDTH = 100000
 
     //http://modi.jpn.org/font_komorebi-gothic.php
-    const fontFile = './src/fonts/defaultFont.ttf'
+    const fontFile = fontFilePath
     const textToSVG = text_to_svg.loadSync(fontFile)
     const svgOptions = {x: 0, y: 0, fontSize: fontSize, anchor: "left top", attributes: {fill: "black"}};
     let totalHeight = 0
@@ -93,15 +93,19 @@ async function printTasksOnBaseWallpaper(params, callback) {
     const sharpOptions = svgBuffer.map(rowData => ({
         input: Buffer.from(rowData.svg),
         top: Math.floor(y + rowData.top),
-        left: x
+        left: Math.floor(x)
     }))
 
-    sharp('./src/images/baseWallpaper.jpg')
+    await sharp(baseWallpaperPath)
         .composite(sharpOptions)
-        .toFile('./src/images/modifiedWallpaper.jpg')
+        .toFile(outputFile)
 
     await callback()
   })
+}
+
+function sendWebContents() {
+  mainWindow.webContents.send('previewWallpaper')
 }
 
 // Create html file from ejs template
@@ -184,9 +188,8 @@ ipcMain.handle('save', (event, data,deadline) => {
   db.run("INSERT INTO tasks (text, display, UpdatedAt, deadline, IsUseDeadline) values(?, ?, ?, ?, ?)", data, false, Date.now(), deadline, IsUseDeadline)
   // Close window after saving data
   const currentWindow = BrowserWindow.getFocusedWindow()
-  updateMainWindow()
+  updateIndexHtml()
   currentWindow.close()
-
 })
 
 
@@ -229,7 +232,7 @@ ipcMain.handle('saveChange', (event, task_id, data, deadline) => {
   db.run("UPDATE tasks SET text = ? ,deadline = ?, IsUseDeadline = ? WHERE id = ?", data, deadline, IsUseDeadline,task_id)
   const currentWindow = BrowserWindow.getFocusedWindow()
   currentWindow.close()
-  updateMainWindow()
+  updateIndexHtml()
 })
 
 /*TODO
@@ -240,6 +243,9 @@ ipcMain.handle("deleted",(event,task_id)=>{
 })
 
 ipcMain.handle('openSettings', () => {
+  fs.copyFileSync(path.join(__dirname, '../images/baseWallpaper.jpg'), path.join(__dirname, '../images/previewBaseWallpaper.jpg'))
+  fs.copyFileSync(path.join(__dirname, '../fonts/defaultFont.ttf'), path.join(__dirname, '../fonts/previewFontFile.ttf'))
+  printTasksOnBaseWallpaper(settings, path.join(__dirname, '../images/previewBaseWallpaper.jpg'), path.join(__dirname, '../fonts/previewFontFile.ttf'), './src/images/output.jpg', sendWebContents)
   createHtml({settings: settings}, './src/settings.ejs', './dist/settings.html')
   mainWindow.loadFile('./dist/settings.html')
 })
@@ -251,6 +257,9 @@ ipcMain.handle('saveBaseWallpaper', async () => {
     properties: ['openFile'],
     filters: [{name: '画像ファイル', extensions: ['jpg', 'png', 'gif']}]
   })
+  if (selectedBaseWallpaper['canceled'] == false) {
+    fs.copyFileSync(selectedBaseWallpaper['filePaths'][0], path.join(__dirname, '../images/previewBaseWallpaper.jpg'))
+  }
   await mainWindow.webContents.send('selectedWallpaperPath', [selectedBaseWallpaper['filePaths'][0]])
 })
 
@@ -261,11 +270,23 @@ ipcMain.handle('saveFontFile', async () => {
     properties: ['openFile'],
     filters: [{name: 'フォントファイル', extensions: ['ttf']}]
   })
+  if (selectedFontFile['canceled'] == false) {
+    fs.copyFileSync(selectedFontFile['filePaths'][0], path.join(__dirname, '../fonts/previewFontFile.ttf'))
+  }
   await mainWindow.webContents.send('selectedFontFilePath', [selectedFontFile['filePaths'][0]])
 })
 
 ipcMain.handle('backToMainWindow', () => {
-  updateMainWindow()
+  updateIndexHtml()
+})
+
+ipcMain.handle('preview', (event, taskPosition, fontSize, lineSpacing) => {
+  const previewSettings = {
+    taskPosition: taskPosition,
+    taskFont: fontSize,
+    lineSpacing: lineSpacing
+  }
+  printTasksOnBaseWallpaper(previewSettings, path.join(__dirname, '../images/previewBaseWallpaper.jpg'), path.join(__dirname, '../fonts/previewFontFile.ttf'), './src/images/output.jpg', sendWebContents)
 })
 
 ipcMain.handle('saveSettings', (event, taskPosition, fontSize, lineSpacing) => {
@@ -280,16 +301,12 @@ ipcMain.handle('saveSettings', (event, taskPosition, fontSize, lineSpacing) => {
     fs.copyFileSync(selectedFontFile['filePaths'][0], path.join(__dirname, '../fonts/defaultFont.ttf'))
   }
   loadSettings()
-  updateMainWindow()
+  updateIndexHtml()
+  printTasksOnBaseWallpaper(settings, path.join(__dirname, '../images/baseWallpaper.jpg'), path.join(__dirname, '../fonts/defaultFont.ttf'), './src/images/modifiedWallpaper.jpg', changeWallpaper)
 })
 
 ipcMain.handle('displayTasks', async () => {
-  const params = {
-    taskPosition: settings['taskPosition'],
-    lineSpacing: settings['lineSpacing'],
-    taskFont: settings['taskFont']
-  }
-  await printTasksOnBaseWallpaper(params, changeWallpaper)
+  await printTasksOnBaseWallpaper(settings, path.join(__dirname, '../images/baseWallpaper.jpg'), path.join(__dirname, '../fonts/defaultFont.ttf'), './src/images/modifiedWallpaper.jpg', changeWallpaper)
 })
 
 ipcMain.handle('restoreOriginalWallpaper', async () => {

@@ -9,6 +9,9 @@
 </head>
 <body>
     <h1>設定</h1>
+    <div class="previewDiv">
+        <img id="previewWallpaper" src="../src/images/output.jpg" alt="プレビュー">
+    </div>
     <button id="saveBaseWallpaper" type="button">タスクの背景画像を選択</button><div id="selectedWallpaperPath"></div>
     <button id="saveFontFile" type="button">フォントファイルを選択</button><div id="selectedFontFilePath"></div>
     画面の左端から<input id="task-position-x" type="number" min="0" max="100" value="<%= settings['taskPosition'][0] %>">% <br>
