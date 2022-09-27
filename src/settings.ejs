@@ -12,18 +12,12 @@
     <div class="previewDiv">
         <img id="previewWallpaper" src="../src/images/output.jpg" alt="プレビュー">
     </div>
-    <button id="saveBaseWallpaper" type="button">タスクの背景画像を選択</button><div id="selectedWallpaperPath"></div>
-    <button id="saveFontFile" type="button">フォントファイルを選択</button><div id="selectedFontFilePath"></div>
-    画面の左端から<input id="task-position-x" type="number" min="0" max="100" value="<%= settings['taskPosition'][0] %>">% <br>
-    画面の上端から<input id="task-position-y" type="number" min="0" max="100" value="<%= settings['taskPosition'][1] %>">% <br>
-    フォントサイズ
-    <select id="fontSize">
-        <% var baseFontSize = 16; %>
-        <% for (let i = 0; i < 4; i++) { %>
-            <option value="<%= baseFontSize * (2 ** i) %>"<% if (settings.taskFont ==  baseFontSize * (2 ** i)) { %> selected <% } %>><%= baseFontSize * (2 ** i) %></option>
-        <% } %>
-    </select> <br>
-    行の間隔<input id="lineSpacing" type="number" value="<%= settings['lineSpacing'] %>">px <br>
+    <button id="saveBaseWallpaper" type="button">タスクの背景画像を選択</button><div id="selectedWallpaperPath"><br></div>
+    <button id="saveFontFile" type="button">フォントファイルを選択</button><div id="selectedFontFilePath"><br></div>
+    水平位置<input id="task-position-x" type="range" min="0" max="100" value="<%= settings['taskPosition'][0] %>"><br>
+    垂直位置<input id="task-position-y" type="range" min="0" max="100" value="<%= settings['taskPosition'][1] %>"><br>
+    フォントサイズ<input id="fontSize" type="range" min="0" max="100" value="<%= settings.taskFont %>"><br>
+    行の間隔<input id="lineSpacing" type="range" min="0" max="100" value="<%= settings['lineSpacing'] %>"><br>
     <button id="backToMainWindow" type="button">キャンセル</button>
     <button id="saveSettings" type="button">保存</button>
     <!-- You can also require other files to run in this process -->

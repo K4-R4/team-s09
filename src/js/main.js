@@ -153,6 +153,7 @@ app.whenReady().then(() => {
     if (err) throw err
     createHtml({allTasks: allTasks}, './src/index.ejs', './dist/index.html')
     mainWindow = createWindow({
+      autoHideMenuBar: true,
       width: 700,
       height: 600,
       webPreferences: {
@@ -181,6 +182,7 @@ app.on('window-all-closed', function () {
 // Open detail window
 ipcMain.handle('detail', () => {
   createWindow({
+    autoHideMenuBar: true,
     width: 340,
     height: 320,
     webPreferences: {
@@ -229,6 +231,7 @@ ipcMain.handle('edit', (event, task_id) => {
     }
     createHtml({task: task}, './src/edit.ejs', './dist/edit.html')
     createWindow({
+      autoHideMenuBar: true,
       width: 400,
       height: 350,
       webPreferences: {
