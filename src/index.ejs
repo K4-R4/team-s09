@@ -28,7 +28,7 @@
         <thead>
             <tr>
                 <th>TODO</th>
-                <th width="160">〆切</th>
+                <th width="100">〆切</th>
                 <th width="70"></th>
                 <th width="70"></th>
                 <th width="70"></th>
@@ -40,7 +40,7 @@
                 <tr id="<%= task.id %>">
                     <td><li><%= task.text %></li></td>
                     <% if(task.IsUseDeadline != 0){%>
-                      <td><li><%= task.deadline %></li></td>
+                      <td><%= task.deadline %></td>
                     <% }else{ %>
                       <td><li></li></td>
                     <% } %>

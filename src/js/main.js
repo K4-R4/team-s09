@@ -8,6 +8,7 @@ const wallpaper = require('wallpaper')
 const Store = require('electron-store')
 const sharp = require('sharp');
 const text_to_svg = require('text-to-svg')
+const { contextIsolated } = require('process')
 const store = new Store()
 
 const db = new sqlite3.Database("./todo.db")
@@ -61,25 +62,29 @@ async function printTasksOnBaseWallpaper(params, baseWallpaperPath, fontFilePath
 
     let svgBuffer = []
 
+    //改行処理
+    //tasksforeachでひとつずつ
     tasks.forEach(task => {
       let row = ""
+
       task['text'] = task['IsUseDeadline'] != 0? task['text']+" "+task['deadline']:task['text']
       let textInArray = Array.from(task['text'])
       //文字列が規定の幅を超えるなら改行する
       //一行の文字列をsvgデータの配列としてsvgBufferに保存する
       textInArray.forEach(char => {
           //行に新たに文字を加えた場合のwidth, heightを取得する
+          //charが改行コードならtotalHeight += fontSize + lineSpacing
           const newRow = row + char
           const {width, height} = textToSVG.getMetrics(newRow, svgOptions)
           //widthが規定の幅を超えるならrowをsvgデータとして保存する
           //規定の幅を超えないならrowに文字を追加(newRow)してループする
-          if (width > MAXWIDTH) {
-              svgBuffer.push({svg: textToSVG.getSVG(row, svgOptions), top: totalHeight})
-              row = char
-              totalHeight += height + lineSpacing
+          if (width > MAXWIDTH || char == '\n') {
+            svgBuffer.push({svg: textToSVG.getSVG(row, svgOptions), top: totalHeight})
+            row = char == '\n' ? "" : char
+            totalHeight += height + lineSpacing
           } else {
-              row = newRow
-          }
+            row = newRow
+          }          
       })
       //最後の改行を終えて残る保存されていない文字列をsvgデータとして保存する
       if (row.length > 0) {
@@ -169,8 +174,8 @@ app.on('window-all-closed', function () {
 // Open detail window
 ipcMain.handle('detail', () => {
   createWindow({
-    width: 400,
-    height: 300,
+    width: 340,
+    height: 320,
     webPreferences: {
       preload: path.join(__dirname, 'preload.js')
     }
@@ -218,7 +223,7 @@ ipcMain.handle('edit', (event, task_id) => {
     createHtml({task: task}, './src/edit.ejs', './dist/edit.html')
     createWindow({
       width: 400,
-      height: 300,
+      height: 350,
       webPreferences: {
         preload: path.join(__dirname, 'preload.js')
       }
