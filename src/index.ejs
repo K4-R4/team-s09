@@ -48,13 +48,12 @@
                 <tr id="<%= task.id %>">
                     <td><li><%= task.text %></li></td>
                     <% if(task.IsUseDeadline != 0){%>
-                      <td><%= task.deadline %></td>
+                      <td><%= (task.deadline).replace(/-/g, "/") %></td>
                     <% }else{ %>
-                      <td><li></li></td>
+                      <td></td>
                     <% } %>
                     <td>
                         <button class="display display<%= task.display %>" type="button" >表示</button>
-
                     </td>
                     <td>
                         <button class="edit" type="button">編集</button>
