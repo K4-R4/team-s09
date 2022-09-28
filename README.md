@@ -10,10 +10,10 @@ Non sticky めも
 
 
 # 使用技術
-言語 (javascript, html, css)
-フレームワーク (electron)
-ライブラリ (ejs, electron-store, electron, jimp, sqlite3, wallpaper)
-インフラ環境 (ユーザーがダウンロードします)
+言語 (javascript, html, css)<br>
+フレームワーク (electron)<br>
+ライブラリ (ejs, electron-store, electron, jimp, sqlite3, wallpaper)<br>
+インフラ環境 (ユーザーがダウンロードします)<br>
 
 # DEMO動画
 
