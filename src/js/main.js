@@ -86,7 +86,7 @@ async function makeTaskOnBaseWallpaper(params, baseWallpaperPath, fontFilePath, 
   tasks.forEach(task => {
     let row = ""
 
-    task['text'] = task['IsUseDeadline'] != 0? task['text']+" "+task['deadline']:task['text']
+    task['text'] = task['IsUseDeadline'] != 0? task['deadline'].replace(/-/g, "/") + " " + task['text']:task['text']
     let textInArray = Array.from(task['text'])
     //文字列が規定の幅を超えるなら改行する
     //一行の文字列をsvgデータの配列としてsvgBufferに保存する

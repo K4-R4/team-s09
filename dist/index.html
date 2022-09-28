@@ -8,7 +8,7 @@
   <meta http-equiv="Content-Security-Policy"
     content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'">
   <link href="../src/styles/styles.css" rel="stylesheet">
-  <title>memo</title>
+  <title>Non-sticky めも</title>
 </head>
 <body>
   <div class="Header">
@@ -18,31 +18,39 @@
     <button id="openSettings" type="button">設定</button>
   </div>
   <div class="Contents">
-    <h1>TODO LIST</h1>
+    <h1>Non-sticky めも</h1>
     <div class='add'>
       <form>
         <button id="add" type="button">TODO 追加</button>
       </form>
     </div>
+    
+    <select id="sort">
+      <option value="id" >並び順を変更</option>
+      <option value="UpdatedAt"  selected >更新</option>
+      <option value="deadline" >期限</option>
+    </select>
+
     <table>
-        <thead>
-            <tr>
-                <th>TEXT</th>
-                <th></th>
-                <th></th>
+        <thead> 
+            <tr>              
+                <th>TODO</th>
+                <th width="100">〆切</th>
+                <th width="70"></th>
+                <th width="70"></th>
+                <th width="70"></th>
             </tr>
         </thead>
         <tbody>
           <ul>
             
                 <tr id="2">
-                    <td><li>tezt</li></td>
+                    <td><li>サークルの打ち合わせ</li></td>
                     
-                      <td><li></li></td>
+                      <td>2022/09/30</td>
                     
                     <td>
                         <button class="display display1" type="button" >表示</button>
-
                     </td>
                     <td>
                         <button class="edit" type="button">編集</button>
@@ -53,13 +61,13 @@
                 </tr>
             
                 <tr id="3">
-                    <td><li>hw math p09</li></td>
+                    <td><li>統計力学
+課題3</li></td>
                     
-                      <td><li>2022-09-20</li></td>
+                      <td>2022/09/30</td>
                     
                     <td>
                         <button class="display display1" type="button" >表示</button>
-
                     </td>
                     <td>
                         <button class="edit" type="button">編集</button>
@@ -70,13 +78,28 @@
                 </tr>
             
                 <tr id="4">
-                    <td><li>a</li></td>
+                    <td><li>柔軟剤買う</li></td>
                     
-                      <td><li>2022-09-22</li></td>
+                      <td>2022/09/22</td>
                     
                     <td>
                         <button class="display display0" type="button" >表示</button>
-
+                    </td>
+                    <td>
+                        <button class="edit" type="button">編集</button>
+                    </td>
+                    <td>
+                        <button class="delete" type="button">削除</button>
+                    </td>
+                </tr>
+            
+                <tr id="5">
+                    <td><li>バイトのシフト提出</li></td>
+                    
+                    <td></td>
+                    
+                    <td>
+                        <button class="display display0" type="button" >表示</button>
                     </td>
                     <td>
                         <button class="edit" type="button">編集</button>
