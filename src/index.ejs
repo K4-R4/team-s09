@@ -24,17 +24,15 @@
         <button id="add" type="button">TODO 追加</button>
       </form>
     </div>
+    <select id="sort">
+      <option value="id" <% if (sortsetting == 'id' ){ %> selected <% } %>>並び順を変更</option>
+      <option value="UpdatedAt" <% if (sortsetting ==  'UpdatedAt') { %> selected <% } %>>更新</option>
+      <option value="deadline" <% if (sortsetting ==  'deadline') { %> selected <% } %>>期限</option>
+    </select>
+
     <table>
-        <thead>
-          <select id="sort">
-            <option value="id" <% if (sortsetting == 'id' ){ %> selected <% } %>>並び順を変更</option>
-            <option value="UpdatedAt" <% if (sortsetting ==  'UpdatedAt') { %> selected <% } %>>更新</option>
-            <option value="deadline" <% if (sortsetting ==  'deadline') { %> selected <% } %>>期限</option>
-          </select>
-          <th></th>
-          <th></th>
-            <tr>
-              
+        <thead> 
+            <tr>              
                 <th>TODO</th>
                 <th width="100">〆切</th>
                 <th width="70"></th>
@@ -48,9 +46,9 @@
                 <tr id="<%= task.id %>">
                     <td><li><%= task.text %></li></td>
                     <% if(task.IsUseDeadline != 0){%>
-                      <td><%= task.deadline %></td>
+                    <td><%= task.deadline %></td>
                     <% }else{ %>
-                      <td></td>
+                    <td></td>
                     <% } %>
                     <td>
                         <button class="display display<%= task.display %>" type="button" >表示</button>
