@@ -61,52 +61,43 @@ async function changeWallpaper() {
   await wallpaper.set(MODIFIED_WALLPAPER_PATH)
 }
 
-async function printTasksOnBaseWallpaper(params, baseWallpaperPath, fontFilePath, outputFile, callback, tasks) {
+//抜き出したタスクを壁紙にする
+async function makeTaskOnBaseWallpaper(params, baseWallpaperPath, fontFilePath, outputFile, callback,tasks){
+  const image = await sharp(baseWallpaperPath)//
+  const metadata = await image.metadata()
 
-    const image = await sharp(baseWallpaperPath)//
-    const metadata = await image.metadata()
+  let x = Number(metadata['width'] * params['taskPosition'][0] / 100)
+  let y = Number(metadata['height'] * params['taskPosition'][1] / 100)
+  let lineSpacing = Number(params['lineSpacing'])
+  let fontSize = Number(params['taskFont'])
 
-    let x = Number(metadata['width'] * params['taskPosition'][0] / 100)
-    let y = Number(metadata['height'] * params['taskPosition'][1] / 100)
-    let lineSpacing = Number(params['lineSpacing'])
-    let fontSize = Number(params['taskFont'])
+  const MAXWIDTH = 100000
 
-    const MAXWIDTH = 100000
+  //http://modi.jpn.org/font_komorebi-gothic.php
+  const fontFile = fontFilePath
+  const textToSVG = text_to_svg.loadSync(fontFile)
+  const svgOptions = {x: 0, y: 0, fontSize: fontSize, anchor: "left top", attributes: {fill: "black"}};
+  let totalHeight = 0
 
-    //http://modi.jpn.org/font_komorebi-gothic.php
-    const fontFile = fontFilePath
-    const textToSVG = text_to_svg.loadSync(fontFile)
-    const svgOptions = {x: 0, y: 0, fontSize: fontSize, anchor: "left top", attributes: {fill: "black"}};
-    let totalHeight = 0
+  let svgBuffer = []
 
-    let svgBuffer = []
+  //改行処理
+  //tasksforeachでひとつずつ
+  tasks.forEach(task => {
+    let row = ""
 
-    //改行処理
-    //tasksforeachでひとつずつ
-    tasks.forEach(task => {
-      let row = ""
-
-      task['text'] = task['IsUseDeadline'] != 0? task['deadline'].replace(/-/g, "/") + " " + task['text']:task['text']
-      let textInArray = Array.from(task['text'])
-      //文字列が規定の幅を超えるなら改行する
-      //一行の文字列をsvgデータの配列としてsvgBufferに保存する
-      textInArray.forEach(char => {
-          //行に新たに文字を加えた場合のwidth, heightを取得する
-          //charが改行コードならtotalHeight += fontSize + lineSpacing
-          const newRow = row + char
-          const {width, height} = textToSVG.getMetrics(newRow, svgOptions)
-          //widthが規定の幅を超えるならrowをsvgデータとして保存する
-          //規定の幅を超えないならrowに文字を追加(newRow)してループする
-          if (width > MAXWIDTH || char == '\n') {
-            svgBuffer.push({svg: textToSVG.getSVG(row, svgOptions), top: totalHeight})
-            row = char == '\n' ? "" : char
-            totalHeight += height + lineSpacing
-          } else {
-            row = newRow
-          }          
-      })
-      //最後の改行を終えて残る保存されていない文字列をsvgデータとして保存する
-      if (row.length > 0) {
+    task['text'] = task['IsUseDeadline'] != 0? task['text']+" "+task['deadline']:task['text']
+    let textInArray = Array.from(task['text'])
+    //文字列が規定の幅を超えるなら改行する
+    //一行の文字列をsvgデータの配列としてsvgBufferに保存する
+    textInArray.forEach(char => {
+        //行に新たに文字を加えた場合のwidth, heightを取得する
+        //charが改行コードならtotalHeight += fontSize + lineSpacing
+        const newRow = row + char
+        const {width, height} = textToSVG.getMetrics(newRow, svgOptions)
+        //widthが規定の幅を超えるならrowをsvgデータとして保存する
+        //規定の幅を超えないならrowに文字を追加(newRow)してループする
+        if (width > MAXWIDTH || char == '\n') {
           svgBuffer.push({svg: textToSVG.getSVG(row, svgOptions), top: totalHeight})
           row = char == '\n' ? "" : char
           totalHeight += height + lineSpacing
@@ -120,6 +111,7 @@ async function printTasksOnBaseWallpaper(params, baseWallpaperPath, fontFilePath
     }
     //項目ごとに改行する
     totalHeight += fontSize + lineSpacing
+  })
 
 
   const sharpOptions = svgBuffer.map(rowData => ({
@@ -155,6 +147,8 @@ async function printTasksOnBaseWallpaper(params, baseWallpaperPath, fontFilePath
     })
   }
 }
+
+
 
 
 function sendWebContents() {
