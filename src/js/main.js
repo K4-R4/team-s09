@@ -61,75 +61,93 @@ async function changeWallpaper() {
   await wallpaper.set(MODIFIED_WALLPAPER_PATH)
 }
 
-async function printTasksOnBaseWallpaper(params, baseWallpaperPath, fontFilePath, outputFile, callback) {
-  db.all("SELECT text, deadline, IsUseDeadline FROM tasks WHERE display = true", async function (dbErr, tasks) {
+//抜き出したタスクを壁紙にする
+async function makeTaskOnBaseWallpaper(params, baseWallpaperPath, fontFilePath, outputFile, callback,tasks){
+  const image = await sharp(baseWallpaperPath)//
+  const metadata = await image.metadata()
 
-    if (dbErr) throw dbErr
+  let x = Number(metadata['width'] * params['taskPosition'][0] / 100)
+  let y = Number(metadata['height'] * params['taskPosition'][1] / 100)
+  let lineSpacing = Number(params['lineSpacing'])
+  let fontSize = Number(params['taskFont'])
 
-    const image = await sharp(baseWallpaperPath)//
-    const metadata = await image.metadata()
+  const MAXWIDTH = 100000
 
-    let x = Number(metadata['width'] * params['taskPosition'][0] / 100)
-    let y = Number(metadata['height'] * params['taskPosition'][1] / 100)
-    let lineSpacing = Number(params['lineSpacing'])
-    let fontSize = Number(params['taskFont'])
+  //http://modi.jpn.org/font_komorebi-gothic.php
+  const fontFile = fontFilePath
+  const textToSVG = text_to_svg.loadSync(fontFile)
+  const svgOptions = {x: 0, y: 0, fontSize: fontSize, anchor: "left top", attributes: {fill: "black"}};
+  let totalHeight = 0
 
-    const MAXWIDTH = 100000
+  let svgBuffer = []
 
-    //http://modi.jpn.org/font_komorebi-gothic.php
-    const fontFile = fontFilePath
-    const textToSVG = text_to_svg.loadSync(fontFile)
-    const svgOptions = {x: 0, y: 0, fontSize: fontSize, anchor: "left top", attributes: {fill: "black"}};
-    let totalHeight = 0
+  //改行処理
+  //tasksforeachでひとつずつ
+  tasks.forEach(task => {
+    let row = ""
 
-    let svgBuffer = []
-
-    //改行処理
-    //tasksforeachでひとつずつ
-    tasks.forEach(task => {
-      let row = ""
-
-      task['text'] = task['IsUseDeadline'] != 0? task['text']+" "+task['deadline']:task['text']
-      let textInArray = Array.from(task['text'])
-      //文字列が規定の幅を超えるなら改行する
-      //一行の文字列をsvgデータの配列としてsvgBufferに保存する
-      textInArray.forEach(char => {
-          //行に新たに文字を加えた場合のwidth, heightを取得する
-          //charが改行コードならtotalHeight += fontSize + lineSpacing
-          const newRow = row + char
-          const {width, height} = textToSVG.getMetrics(newRow, svgOptions)
-          //widthが規定の幅を超えるならrowをsvgデータとして保存する
-          //規定の幅を超えないならrowに文字を追加(newRow)してループする
-          if (width > MAXWIDTH || char == '\n') {
-            svgBuffer.push({svg: textToSVG.getSVG(row, svgOptions), top: totalHeight})
-            row = char == '\n' ? "" : char
-            totalHeight += height + lineSpacing
-          } else {
-            row = newRow
-          }          
-      })
-      //最後の改行を終えて残る保存されていない文字列をsvgデータとして保存する
-      if (row.length > 0) {
+    task['text'] = task['IsUseDeadline'] != 0? task['text']+" "+task['deadline']:task['text']
+    let textInArray = Array.from(task['text'])
+    //文字列が規定の幅を超えるなら改行する
+    //一行の文字列をsvgデータの配列としてsvgBufferに保存する
+    textInArray.forEach(char => {
+        //行に新たに文字を加えた場合のwidth, heightを取得する
+        //charが改行コードならtotalHeight += fontSize + lineSpacing
+        const newRow = row + char
+        const {width, height} = textToSVG.getMetrics(newRow, svgOptions)
+        //widthが規定の幅を超えるならrowをsvgデータとして保存する
+        //規定の幅を超えないならrowに文字を追加(newRow)してループする
+        if (width > MAXWIDTH || char == '\n') {
           svgBuffer.push({svg: textToSVG.getSVG(row, svgOptions), top: totalHeight})
-      }
-      //項目ごとに改行する
-      totalHeight += fontSize + lineSpacing
+          row = char == '\n' ? "" : char
+          totalHeight += height + lineSpacing
+        } else {
+          row = newRow
+        }          
     })
-
-
-    const sharpOptions = svgBuffer.map(rowData => ({
-        input: Buffer.from(rowData.svg),
-        top: Math.floor(y + rowData.top),
-        left: Math.floor(x)
-    }))
-
-    await sharp(baseWallpaperPath)
-        .composite(sharpOptions)
-        .toFile(outputFile)
-
-    await callback()
+    //最後の改行を終えて残る保存されていない文字列をsvgデータとして保存する
+    if (row.length > 0) {
+        svgBuffer.push({svg: textToSVG.getSVG(row, svgOptions), top: totalHeight})
+    }
+    //項目ごとに改行する
+    totalHeight += fontSize + lineSpacing
   })
+
+
+  const sharpOptions = svgBuffer.map(rowData => ({
+      input: Buffer.from(rowData.svg),
+      top: Math.floor(y + rowData.top),
+      left: Math.floor(x)
+  }))
+
+  await sharp(baseWallpaperPath)
+      .composite(sharpOptions)
+      .toFile(outputFile)
+
+  await callback()
+  }
+
+async function printTasksOnBaseWallpaper(params, baseWallpaperPath, fontFilePath, outputFile, callback) {
+  var sortsetting = store.get('sortsetting') || 'id'
+  if (sortsetting == 'deadline'){
+    db.all("SELECT text, deadline, IsUseDeadline FROM tasks WHERE display = true and IsUseDeadline = true ORDER BY deadline",(err,IsUseDeadlineTrues)=>{
+      if (err) throw err
+      db.all("SELECT id, text, display ,deadline, IsUseDeadline FROM tasks WHERE display = true and IsUseDeadline = false",(err,IsUseDeadlineFalses) =>{
+        if (err) throw err
+        tasks = IsUseDeadlineTrues.concat(IsUseDeadlineFalses)
+        makeTaskOnBaseWallpaper(params, baseWallpaperPath, fontFilePath, outputFile, callback,tasks)
+      })
+    })
+  }else{
+    db.all("SELECT text, deadline, IsUseDeadline FROM tasks WHERE display = true ORDER BY ?", sortsetting, async function (dbErr, tasks) {
+
+      if (dbErr) throw dbErr
+      makeTaskOnBaseWallpaper(params, baseWallpaperPath, fontFilePath, outputFile, callback,tasks)
+      
+    })
+  }
 }
+
 
 function sendWebContents() {
   mainWindow.webContents.send('previewWallpaper')
@@ -170,6 +188,7 @@ app.whenReady().then(() => {
       db.all("SELECT id, text, display ,deadline, IsUseDeadline FROM tasks WHERE IsUseDeadline = false",(err,IsUseDeadlineFalses) =>{
         if (err) throw err
         let allTasks = IsUseDeadlineTrues.concat(IsUseDeadlineFalses)
+        console.log(allTasks)
         createHtml({allTasks: allTasks, sortsetting: sortsetting}, './src/index.ejs', './dist/index.html')
         mainWindow = createWindow({
           width: 700,
@@ -229,8 +248,8 @@ ipcMain.handle('save', (event, data,deadline) => {
   if (data.length === 0) {
     return dialog.showErrorBox("", "入力がありません")
   }
-  deadline = deadline != null? deadline:Date.now()
-  const IsUseDeadline = deadline != null? 1:0
+  const IsUseDeadline = deadline != ''? 1:0
+  deadline = deadline != ''? deadline:Date.now()
   db.run("INSERT INTO tasks (text, display, UpdatedAt, deadline, IsUseDeadline) values(?, ?, ?, ?, ?)", data, false, Date.now(), deadline, IsUseDeadline)
   // Close window after saving data
   const currentWindow = BrowserWindow.getFocusedWindow()
@@ -274,8 +293,8 @@ ipcMain.handle('edit', (event, task_id) => {
 })
 
 ipcMain.handle('saveChange', (event, task_id, data, deadline) => {
-  deadline = deadline != null? deadline:Date.now()
-  const IsUseDeadline = deadline != null? 1:0
+  const IsUseDeadline = deadline != ''? 1:0
+  deadline = deadline != ''? deadline:Date.now()
   db.run("UPDATE tasks SET text = ? ,deadline = ?, IsUseDeadline = ? WHERE id = ?", data, deadline, IsUseDeadline,task_id)
   const currentWindow = BrowserWindow.getFocusedWindow()
   currentWindow.close()
