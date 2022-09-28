@@ -10,14 +10,17 @@ Non sticky めも
 
 
 # 使用技術
-言語 (javascript, html, css)
-フレームワーク (electron)
-ライブラリ (ejs, electron-store, electron, jimp, sqlite3, wallpaper)
-インフラ環境 (ユーザーがダウンロードします)
+言語 (javascript, html, css)<br>
+フレームワーク (electron)<br>
+ライブラリ (ejs, electron-store, electron, jimp, sqlite3, wallpaper)<br>
+インフラ環境 (ユーザーがダウンロードします)<br>
+
+# DEMO動画
+
 
 # 使い方
-git clone
-npm start
+git clone<br>
+npm start<br>
 
 # create文
  CREATE TABLE tasks(id INTEGER PRIMARY KEY,text TEXT NOT NULL,display BOOLEAN NOT NULL, UpdatedAt TIMESTAMP NOT NULL, deadline TIMESTAMP NOT NULL, IsUseDeadline BOOLEAN NOT NULL DEFAULT false);
