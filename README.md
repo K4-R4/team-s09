@@ -15,9 +15,12 @@ Non sticky めも
 ライブラリ (ejs, electron-store, electron, jimp, sqlite3, wallpaper)
 インフラ環境 (ユーザーがダウンロードします)
 
+# DEMO動画
+
+
 # 使い方
-git clone
-npm start
+git clone<br>
+npm start<br>
 
 # create文
  CREATE TABLE tasks(id INTEGER PRIMARY KEY,text TEXT NOT NULL,display BOOLEAN NOT NULL, UpdatedAt TIMESTAMP NOT NULL, deadline TIMESTAMP NOT NULL, IsUseDeadline BOOLEAN NOT NULL DEFAULT false);
