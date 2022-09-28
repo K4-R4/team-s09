@@ -47,7 +47,7 @@
                 <tr id="<%= task.id %>">
                     <td><li><%= task.text %></li></td>
                     <% if(task.IsUseDeadline != 0){%>
-                    <td><%= task.deadline %></td>
+                      <td><%= (task.deadline).replace(/-/g, "/") %></td>
                     <% }else{ %>
                     <td></td>
                     <% } %>
