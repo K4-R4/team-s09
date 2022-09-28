@@ -172,6 +172,7 @@ app.whenReady().then(() => {
         let allTasks = IsUseDeadlineTrues.concat(IsUseDeadlineFalses)
         createHtml({allTasks: allTasks, sortsetting: sortsetting}, './src/index.ejs', './dist/index.html')
         mainWindow = createWindow({
+          autoHideMenuBar: true,
           width: 700,
           height: 600,
           webPreferences: {
@@ -185,6 +186,7 @@ app.whenReady().then(() => {
       if (err) throw err
       createHtml({allTasks: allTasks, sortsetting: sortsetting}, './src/index.ejs', './dist/index.html')
       mainWindow = createWindow({
+        autoHideMenuBar: true,
         width: 700,
         height: 600,
         webPreferences: {
